@@ -127,7 +127,7 @@ export const Sidebar = ({ isOpen, closeSidebar }) => {
 
             <div className="min-w-0">
               <p className="truncate text-[14px] font-extrabold tracking-tight text-slate-900">
-                FoodRescue <span className="text-emerald-700">AI</span>
+                Food<span className="text-emerald-700">Saathi</span>
               </p>
               <p className="mt-1 text-[9px] font-semibold tracking-[0.12em] text-slate-400">
                 ZERO WASTE NETWORK
@@ -294,7 +294,7 @@ export const Sidebar = ({ isOpen, closeSidebar }) => {
           </Link>
 
           <div className="mt-2 flex items-center justify-between px-2.5 pt-1 text-[9px] text-slate-400">
-            <span>FoodRescue AI</span>
+            <span>FoodSaathi</span>
             <span className="rounded-md border border-slate-200/80 bg-white/70 px-1.5 py-0.5">
               v1.0
             </span>

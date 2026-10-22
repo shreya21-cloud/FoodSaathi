@@ -1,8 +1,7 @@
 const VolunteerProfile = require('../models/VolunteerProfile');
 const { getDBStatus } = require('../config/db');
-const { volunteers: mockVolunteers } = require('../seed/seedData');
 
-let memoryVolunteers = JSON.parse(JSON.stringify(mockVolunteers));
+let memoryVolunteers = [];
 
 // @route   GET /api/volunteers
 // @desc    Get all volunteers

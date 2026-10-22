@@ -53,7 +53,7 @@ export const Footer = () => {
           <div>
             <Link
               to="/"
-              aria-label="FoodRescue AI home"
+              aria-label="FoodSaathi home"
               className="group inline-flex items-center gap-3"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#204634] text-white shadow-lg shadow-emerald-950/10 transition-transform duration-300 group-hover:rotate-[-5deg] group-hover:scale-105">
@@ -61,8 +61,7 @@ export const Footer = () => {
               </div>
 
               <span className="text-lg font-bold tracking-tight text-[#193d30]">
-                FoodRescue
-                <span className="text-emerald-700"> AI</span>
+                Food<span className="text-emerald-700">Saathi</span>
               </span>
             </Link>
 
@@ -179,7 +178,7 @@ export const Footer = () => {
         <div className="border-t border-[#e0e5db] py-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs leading-5 text-slate-500">
-              © {new Date().getFullYear()} FoodRescue AI. All rights reserved.
+              © {new Date().getFullYear()} FoodSaathi. All rights reserved.
             </p>
 
             <div className="flex flex-wrap items-center gap-x-2 text-xs text-slate-500">

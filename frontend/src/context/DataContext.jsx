@@ -21,10 +21,10 @@ import { classifyFoodPriority, calculateDistance } from "../utils/aiAlgorithms";
 const DataContext = createContext(null);
 
 const STORAGE_KEYS = {
-  donations: "foodrescue_donations",
-  ngos: "foodrescue_ngos",
-  volunteers: "foodrescue_volunteers",
-  deliveries: "foodrescue_deliveries",
+  donations: "foodsaathi_donations",
+  ngos: "foodsaathi_ngos",
+  volunteers: "foodsaathi_volunteers",
+  deliveries: "foodsaathi_deliveries",
 };
 
 const safeRead = (key, fallback) => {
@@ -280,7 +280,7 @@ export const DataProvider = ({ children }) => {
       priority: donation.priority,
       estimatedDistanceKm: distance,
       assignedAt: new Date().toISOString(),
-      notes: "Matched via FoodRescue AI Matchmaker.",
+      notes: "Matched via FoodSaathi Matchmaker.",
     };
 
     try {

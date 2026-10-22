@@ -193,7 +193,7 @@ export const HowItWorks = () => {
                   {/* Bottom label */}
                   <div className="mt-7 flex items-center justify-between border-t border-slate-100 pt-4">
                     <span className="text-[10px] font-bold text-slate-400">
-                      FOODRESCUE AI
+                      FOODSAATHI AI
                     </span>
 
                     <span

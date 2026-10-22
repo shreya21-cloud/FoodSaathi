@@ -1,3 +1,5 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('dotenv').config();
 const mongoose = require('mongoose');
 const User = require('../models/User');
@@ -8,7 +10,7 @@ const Delivery = require('../models/Delivery');
 const { users, ngos, volunteers, donations, deliveries } = require('./seedData');
 
 const seedDB = async () => {
-  const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/foodrescue_ai';
+  const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/foodsaathi';
   console.log(`Connecting to ${mongoURI}...`);
 
   try {

@@ -57,7 +57,7 @@ export const AnalyticsPage = () => {
   const handleExport = () => {
     addToast({
       title: 'Report Downloaded 📊',
-      message: 'FoodRescue_AI_Impact_Summary_2026.csv generated successfully.',
+      message: 'FoodSaathi_AI_Impact_Summary_2026.csv generated successfully.',
       type: 'success',
     });
   };

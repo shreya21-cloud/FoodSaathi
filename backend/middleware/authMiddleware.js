@@ -14,14 +14,14 @@ const protect = async (req, res, next) => {
     req.user = {
       _id: 'demo-user-id',
       name: 'Demo Rescuer',
-      email: 'demo@foodrescue.ai',
+      email: 'demo@foodsaathi.org',
       role: 'admin',
     };
     return next();
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'foodrescue_ai_super_secret_jwt_key_2026');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'foodsaathi_super_secret_jwt_key_2026');
     
     if (getDBStatus()) {
       const user = await User.findById(decoded.id).select('-password');
@@ -35,7 +35,7 @@ const protect = async (req, res, next) => {
     req.user = {
       _id: decoded.id || 'demo-user-id',
       name: decoded.name || 'Demo User',
-      email: decoded.email || 'demo@foodrescue.ai',
+      email: decoded.email || 'demo@foodsaathi.org',
       role: decoded.role || 'donor',
     };
     next();
@@ -44,7 +44,7 @@ const protect = async (req, res, next) => {
     req.user = {
       _id: 'demo-user-id',
       name: 'Demo Rescuer',
-      email: 'demo@foodrescue.ai',
+      email: 'demo@foodsaathi.org',
       role: 'admin',
     };
     next();

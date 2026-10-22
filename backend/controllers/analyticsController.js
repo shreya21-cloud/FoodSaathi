@@ -1,4 +1,4 @@
-// Analytics Controller for FoodRescue AI
+// Analytics Controller for FoodSaathi
 const getSummaryAnalytics = async (req, res) => {
   try {
     const summary = {

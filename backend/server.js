@@ -1,3 +1,5 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -53,7 +55,7 @@ app.get('/api/health', (req, res) => {
   const dbHealth = getDBHealthDetails();
   res.json({
     status: 'online',
-    platform: 'FoodRescue AI',
+    platform: 'FoodSaathi',
     version: '1.0.0',
     databaseConnected: dbHealth.connected,
     database: {
@@ -78,7 +80,7 @@ app.use('/api/simulator', simulatorRoutes);
 
 // Root message
 app.get('/', (req, res) => {
-  res.send('🌿 FoodRescue AI Backend API is active and running.');
+  res.send('🌿 FoodSaathi Backend API is active and running.');
 });
 
 // Centralized error handler
@@ -86,7 +88,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
-  console.log(`🚀 FoodRescue AI Server listening on port ${PORT}`);
+  console.log(`🚀 FoodSaathi Server listening on port ${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
 });
 

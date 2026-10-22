@@ -13,8 +13,8 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token =
-      localStorage.getItem('foodrescue_token') ||
-      sessionStorage.getItem('foodrescue_token');
+      localStorage.getItem('foodsaathi_token') ||
+      sessionStorage.getItem('foodsaathi_token');
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -30,7 +30,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.code === 'ERR_NETWORK' || !error.response) {
       console.info(
-        '[FoodRescue AI] Network note: Backend API temporarily unreachable, operating in resilient offline state.'
+        '[FoodSaathi] Network note: Backend API temporarily unreachable, operating in resilient offline state.'
       );
     }
     return Promise.reject(error);

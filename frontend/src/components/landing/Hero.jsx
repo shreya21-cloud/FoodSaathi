@@ -130,7 +130,7 @@ export const Hero = () => {
 
             <p className="mx-auto mt-7 max-w-xl text-[15px] leading-7 text-slate-600 sm:text-base sm:leading-8 lg:mx-0">
               Every surplus meal is an opportunity to make a difference.
-              FoodRescue AI connects food donors, NGOs and volunteers through
+              FoodSaathi connects food donors, NGOs and volunteers through
               intelligent matching and coordinated food redistribution.
             </p>
 

@@ -1,8 +1,7 @@
 const NGOProfile = require('../models/NGOProfile');
 const { getDBStatus } = require('../config/db');
-const { ngos: mockNGOs } = require('../seed/seedData');
 
-let memoryNGOs = JSON.parse(JSON.stringify(mockNGOs));
+let memoryNGOs = [];
 
 // @route   GET /api/ngos
 // @desc    Get all NGOs

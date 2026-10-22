@@ -1,4 +1,4 @@
-# 🌿 FoodRescue AI — AI-Powered Food Rescue Network
+# 🌿 FoodSaathi — AI-Powered Food Rescue Network
 
 > **"Rescue Food. Reduce Waste. Feed Communities."**
 > A modern, responsive, and full-stack web platform connecting Food Donors (Hotels, Caterers, Messes), Partner NGOs (Shelters, Food Banks), and Volunteer Couriers using explainable AI triage, route optimization, and a dynamic real-time Food Rescue Simulator.
@@ -137,10 +137,10 @@ Or run them in separate terminals:
 
 | Role          | Name / Organization  | Email                     | Password      |
 | ------------- | -------------------- | ------------------------- | ------------- |
-| **Donor**     | Green Feast Caterers | `donor@foodrescue.ai`     | `password123` |
-| **NGO**       | Hope Food Shelter    | `ngo@foodrescue.ai`       | `password123` |
-| **Volunteer** | Alex Rivera          | `volunteer@foodrescue.ai` | `password123` |
-| **Admin**     | System Administrator | `admin@foodrescue.ai`     | `password123` |
+| **Donor**     | Green Feast Caterers | `donor@foodsaathi.org`     | `password123` |
+| **NGO**       | Hope Food Shelter    | `ngo@foodsaathi.org`       | `password123` |
+| **Volunteer** | Alex Rivera          | `volunteer@foodsaathi.org` | `password123` |
+| **Admin**     | System Administrator | `admin@foodsaathi.org`     | `password123` |
 
 _Note: You can also switch roles anytime directly from the top navigation bar without logging out!_
 

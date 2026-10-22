@@ -31,7 +31,7 @@ export const AuthLayout = ({
           </div>
           <div>
             <div className="text-base font-black tracking-tight text-slate-950">
-              FoodRescue<span className="text-emerald-700"> AI</span>
+              Food<span className="text-emerald-700">Saathi</span>
             </div>
             <div className="text-[9px] font-bold uppercase tracking-widest text-slate-400">
               Zero Waste Network
@@ -52,7 +52,7 @@ export const AuthLayout = ({
       <main className="flex-1 w-full max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 min-h-[calc(100vh-70px)] lg:min-h-screen">
         {/* LEFT PANEL: Brand, Mission, Illustration & Benefit Points (Desktop) */}
         <section
-          aria-label="FoodRescue AI Network Introduction"
+          aria-label="FoodSaathi Network Introduction"
           className="hidden lg:flex lg:col-span-6 xl:col-span-7 flex-col justify-between p-8 xl:p-14 2xl:p-16 border-r border-slate-200/70 bg-gradient-to-br from-[#f8faf5] via-[#fcfdf9] to-emerald-50/40 relative overflow-hidden"
         >
           {/* Subtle Ambient Decorative Circles */}
@@ -64,14 +64,14 @@ export const AuthLayout = ({
             <Link
               to="/"
               className="inline-flex items-center gap-3 group transition"
-              aria-label="Back to FoodRescue AI Homepage"
+              aria-label="Back to FoodSaathi Homepage"
             >
               <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-900 text-white shadow-lg shadow-emerald-950/20 group-hover:scale-105 transition-transform duration-300">
                 <HeartHandshake size={23} strokeWidth={2} />
               </div>
               <div>
                 <span className="block text-xl font-black tracking-tight text-slate-950">
-                  FoodRescue<span className="text-emerald-700"> AI</span>
+                  Food<span className="text-emerald-700">Saathi</span>
                 </span>
                 <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
                   AI-Powered Rescue Network
@@ -223,7 +223,7 @@ export const AuthLayout = ({
             <div className="text-left mb-6">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 text-[11px] font-bold uppercase tracking-wider mb-2">
                 <Leaf size={12} />
-                <span>FoodRescue AI Security</span>
+                <span>FoodSaathi Security</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                 {title}

@@ -1,4 +1,4 @@
-// AI Algorithms & Explainable Heuristics Engine for FoodRescue AI
+// AI Algorithms & Explainable Heuristics Engine for FoodSaathi
 
 /**
  * Calculate Haversine distance between two coordinates in kilometers

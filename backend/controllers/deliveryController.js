@@ -1,9 +1,8 @@
 const Delivery = require('../models/Delivery');
 const Donation = require('../models/Donation');
 const { getDBStatus } = require('../config/db');
-const { deliveries: mockDeliveries } = require('../seed/seedData');
 
-let memoryDeliveries = JSON.parse(JSON.stringify(mockDeliveries));
+let memoryDeliveries = [];
 
 // @route   GET /api/deliveries
 // @desc    Get all deliveries with optional status filter

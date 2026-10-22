@@ -6,7 +6,6 @@ import { RoleBadge } from "./Badge";
 import {
   PlusCircle,
   Menu,
-  RefreshCw,
   LogOut,
   User,
   ChevronDown,
@@ -27,7 +26,7 @@ import {
 
 export const Navbar = ({ toggleSidebar }) => {
   const { user, role, switchRole, logout } = useAuth();
-  const { isBackendConnected, resetDemoData } = useData();
+  const { isBackendConnected } = useData();
   const location = useLocation();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -332,18 +331,6 @@ export const Navbar = ({ toggleSidebar }) => {
                   <User size={15} className="text-slate-400" />
                   Account & Settings
                 </Link>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    resetDemoData();
-                  }}
-                  className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-xs font-medium text-slate-700 hover:bg-amber-50 hover:text-amber-800"
-                >
-                  <RefreshCw size={15} className="text-amber-600" />
-                  Reset Seed Data
-                </button>
 
                 <button
                   type="button"

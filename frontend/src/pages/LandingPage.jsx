@@ -131,7 +131,7 @@ export const LandingPage = () => {
           <Link
             to="/"
             onClick={closeMenu}
-            aria-label="FoodRescue AI home"
+            aria-label="FoodSaathi home"
             className="group flex shrink-0 items-center gap-3"
           >
             <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-900 text-white shadow-lg shadow-emerald-950/15 transition duration-300 group-hover:-rotate-3 group-hover:scale-105">
@@ -140,8 +140,7 @@ export const LandingPage = () => {
 
             <span className="leading-tight">
               <span className="block text-[19px] font-black tracking-[-0.06em] text-slate-950 sm:text-xl">
-                FoodRescue
-                <span className="text-emerald-700"> AI</span>
+                Food<span className="text-emerald-700">Saathi</span>
               </span>
 
               <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400">
@@ -340,7 +339,7 @@ export const LandingPage = () => {
                 to="/dashboard"
                 className="fr-cta inline-flex min-h-13 items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-extrabold text-emerald-950 hover:bg-emerald-50"
               >
-                Explore FoodRescue AI
+                Explore FoodSaathi
                 <ArrowRight size={17} />
               </Link>
 

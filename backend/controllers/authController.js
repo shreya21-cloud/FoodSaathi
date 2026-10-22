@@ -4,9 +4,9 @@ const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const { getDBStatus } = require('../config/db');
-const { users: mockUsers } = require('../seed/seedData');
 
-let memoryUsers = [...mockUsers];
+let memoryUsers = [];
+
 
 const generateToken = (user) => {
   return jwt.sign(
@@ -17,7 +17,7 @@ const generateToken = (user) => {
       role: user.role,
       organizationName: user.organizationName,
     },
-    process.env.JWT_SECRET || 'foodrescue_ai_super_secret_jwt_key_2026',
+    process.env.JWT_SECRET || 'foodsaathi_super_secret_jwt_key_2026',
     { expiresIn: '30d' }
   );
 };
@@ -173,7 +173,7 @@ const register = async (req, res) => {
         message: 'An account with this email address already exists. Please log in instead.',
       });
     }
-    console.error('[FoodRescue AI Auth Register Error]', error);
+    console.error('[FoodSaathi Auth Register Error]', error);
     return res.status(500).json({
       success: false,
       message: error.message || 'Server error during registration.',
@@ -239,7 +239,7 @@ const login = async (req, res) => {
       message: 'Invalid email or password.',
     });
   } catch (error) {
-    console.error('[FoodRescue AI Auth Login Error]', error);
+    console.error('[FoodSaathi Auth Login Error]', error);
     return res.status(500).json({
       success: false,
       message: error.message || 'Server error during login.',
@@ -298,7 +298,7 @@ const googleAuth = async (req, res) => {
             avatar: decoded.picture || '',
             emailVerified: decoded.email_verified,
           };
-          console.warn('[FoodRescue AI] GOOGLE_CLIENT_ID not configured in backend/.env. Using development verification.');
+          console.warn('[FoodSaathi] GOOGLE_CLIENT_ID not configured in backend/.env. Using development verification.');
         } else {
           return res.status(400).json({
             success: false,
@@ -385,7 +385,7 @@ const googleAuth = async (req, res) => {
       user: sanitizeUser(memoryUser),
     });
   } catch (error) {
-    console.error('[FoodRescue AI Auth Google Error]', error);
+    console.error('[FoodSaathi Auth Google Error]', error);
     return res.status(500).json({
       success: false,
       message: error.message || 'Server error during Google authentication.',
@@ -497,7 +497,7 @@ const getMe = async (req, res) => {
 const logout = async (req, res) => {
   return res.json({
     success: true,
-    message: 'Logged out successfully from FoodRescue AI.',
+    message: 'Logged out successfully from FoodSaathi.',
   });
 };
 
@@ -524,14 +524,14 @@ const forgotPassword = async (req, res) => {
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = resetTokenExpiry;
         await user.save();
-        console.log(`[FoodRescue AI Dev Note] Password reset token for ${normalizedEmail}: ${resetToken}`);
+        console.log(`[FoodSaathi Dev Note] Password reset token for ${normalizedEmail}: ${resetToken}`);
       }
     } else {
       const user = memoryUsers.find((u) => u.email.toLowerCase() === normalizedEmail);
       if (user) {
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = resetTokenExpiry;
-        console.log(`[FoodRescue AI Dev Note] In-Memory password reset token for ${normalizedEmail}: ${resetToken}`);
+        console.log(`[FoodSaathi Dev Note] In-Memory password reset token for ${normalizedEmail}: ${resetToken}`);
       }
     }
 
@@ -541,7 +541,7 @@ const forgotPassword = async (req, res) => {
       devToken: process.env.NODE_ENV !== 'production' ? resetToken : undefined,
     });
   } catch (error) {
-    console.error('[FoodRescue AI Forgot Password Error]', error);
+    console.error('[FoodSaathi Forgot Password Error]', error);
     return res.status(500).json({
       success: false,
       message: 'Server error processing password reset request.',
@@ -616,7 +616,7 @@ const resetPassword = async (req, res) => {
       message: 'Password has been successfully reset. You may now log in with your new password.',
     });
   } catch (error) {
-    console.error('[FoodRescue AI Reset Password Error]', error);
+    console.error('[FoodSaathi Reset Password Error]', error);
     return res.status(500).json({
       success: false,
       message: 'Server error processing password reset.',

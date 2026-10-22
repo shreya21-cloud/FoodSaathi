@@ -15,7 +15,7 @@ export const ProtectedRoute = ({ children }) => {
             <Sparkles className="w-7 h-7" />
           </div>
           <div className="text-center">
-            <h3 className="text-base font-bold text-slate-800">FoodRescue AI</h3>
+            <h3 className="text-base font-bold text-slate-800">FoodSaathi</h3>
             <p className="text-xs text-slate-500 mt-1">Verifying secure session...</p>
           </div>
         </div>

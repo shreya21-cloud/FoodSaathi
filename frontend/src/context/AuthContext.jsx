@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
-import { demoAccounts } from '../services/mockData';
 
 const AuthContext = createContext(null);
 
@@ -11,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const [user, setUser] = useState(() => {
-    const saved = getStoredItem('foodrescue_user');
+    const saved = getStoredItem('foodsaathi_user');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -22,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     return null;
   });
 
-  const [token, setToken] = useState(() => getStoredItem('foodrescue_token'));
+  const [token, setToken] = useState(() => getStoredItem('foodsaathi_token'));
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
@@ -33,21 +32,21 @@ export const AuthProvider = ({ children }) => {
 
     if (userData && tokenStr) {
       if (remember) {
-        localStorage.setItem('foodrescue_user', JSON.stringify(userData));
-        localStorage.setItem('foodrescue_token', tokenStr);
-        sessionStorage.removeItem('foodrescue_user');
-        sessionStorage.removeItem('foodrescue_token');
+        localStorage.setItem('foodsaathi_user', JSON.stringify(userData));
+        localStorage.setItem('foodsaathi_token', tokenStr);
+        sessionStorage.removeItem('foodsaathi_user');
+        sessionStorage.removeItem('foodsaathi_token');
       } else {
-        sessionStorage.setItem('foodrescue_user', JSON.stringify(userData));
-        sessionStorage.setItem('foodrescue_token', tokenStr);
-        localStorage.removeItem('foodrescue_user');
-        localStorage.removeItem('foodrescue_token');
+        sessionStorage.setItem('foodsaathi_user', JSON.stringify(userData));
+        sessionStorage.setItem('foodsaathi_token', tokenStr);
+        localStorage.removeItem('foodsaathi_user');
+        localStorage.removeItem('foodsaathi_token');
       }
     } else {
-      localStorage.removeItem('foodrescue_user');
-      localStorage.removeItem('foodrescue_token');
-      sessionStorage.removeItem('foodrescue_user');
-      sessionStorage.removeItem('foodrescue_token');
+      localStorage.removeItem('foodsaathi_user');
+      localStorage.removeItem('foodsaathi_token');
+      sessionStorage.removeItem('foodsaathi_user');
+      sessionStorage.removeItem('foodsaathi_token');
     }
   };
 
@@ -55,20 +54,15 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let isMounted = true;
     const verifySession = async () => {
-      const activeToken = getStoredItem('foodrescue_token');
+      const activeToken = getStoredItem('foodsaathi_token');
       if (activeToken) {
         try {
-          // Attempt to retrieve latest user profile from server
           const res = await api.get('/auth/me');
           if (isMounted && res.data?.success && res.data.user) {
             setUser(res.data.user);
           }
         } catch (err) {
-          // If token was a demo token or backend is in offline demo mode, keep client state
-          if (activeToken.startsWith('demo_token_')) {
-            // Keep active demo session
-          } else if (err.response?.status === 401) {
-            // Expired or invalid token
+          if (err.response?.status === 401) {
             if (isMounted) {
               persistSession(null, null);
             }
@@ -97,18 +91,6 @@ export const AuthProvider = ({ children }) => {
         return { success: true, user: res.data.user };
       }
     } catch (error) {
-      // Offline fallback: Check local demo accounts
-      const matchedKey = Object.keys(demoAccounts).find(
-        (key) => demoAccounts[key].email.toLowerCase() === email.toLowerCase()
-      );
-      if (matchedKey) {
-        const demoUser = demoAccounts[matchedKey];
-        const demoToken = 'demo_token_' + matchedKey;
-        persistSession(demoUser, demoToken, remember);
-        setLoading(false);
-        return { success: true, user: demoUser };
-      }
-
       setLoading(false);
       const serverMessage = error.response?.data?.message || error.message || 'Invalid email or password.';
       throw new Error(serverMessage);
@@ -126,27 +108,9 @@ export const AuthProvider = ({ children }) => {
         return { success: true, user: res.data.user };
       }
     } catch (error) {
-      // If server returned specific validation error (e.g. email exists), throw it
-      if (error.response?.data?.message) {
-        setLoading(false);
-        throw new Error(error.response.data.message);
-      }
-
-      // Offline resilient fallback registration
-      const newUser = {
-        id: 'user_' + Date.now(),
-        name: userData.name,
-        email: userData.email,
-        role: userData.role || 'donor',
-        organizationName: userData.organizationName || '',
-        phone: userData.phone || '',
-        address: userData.address || 'Metro Center, City',
-        createdAt: new Date().toISOString(),
-      };
-      const fallbackToken = 'demo_token_' + newUser.id;
-      persistSession(newUser, fallbackToken, remember);
       setLoading(false);
-      return { success: true, user: newUser };
+      const serverMessage = error.response?.data?.message || error.message || 'Registration failed.';
+      throw new Error(serverMessage);
     }
   };
 
@@ -188,29 +152,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 1-Click Demo Login
-  const loginAsDemo = (roleKey) => {
-    const target = demoAccounts[roleKey] || demoAccounts.donor;
-    const demoToken = 'demo_token_' + roleKey;
-    persistSession(target, demoToken, true);
-    return target;
-  };
-
-  // Instant Role Switcher for testing
-  const switchRole = (newRole) => {
-    const target = demoAccounts[newRole] || {
-      ...user,
-      role: newRole,
-      name: `${newRole.toUpperCase()} Representative`,
-    };
-    persistSession(target, token || 'demo_token_' + newRole, true);
-  };
-
   // Handle external token (e.g. from Google OAuth Authorization Code callback redirect)
   const handleExternalToken = async (tokenStr) => {
     setLoading(true);
     try {
-      localStorage.setItem('foodrescue_token', tokenStr);
+      localStorage.setItem('foodsaathi_token', tokenStr);
       const res = await api.get('/auth/me');
       if (res.data?.success && res.data.user) {
         persistSession(res.data.user, tokenStr, true);
@@ -246,8 +192,6 @@ export const AuthProvider = ({ children }) => {
         forgotPassword,
         resetPassword,
         logout,
-        loginAsDemo,
-        switchRole,
       }}
     >
       {children}

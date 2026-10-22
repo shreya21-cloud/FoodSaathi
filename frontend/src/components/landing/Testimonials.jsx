@@ -5,7 +5,7 @@ export const Testimonials = () => {
   const reviews = [
     {
       quote:
-        "FoodRescue AI changed our banquet operations completely. Instead of throwing away hundreds of fresh buffet portions at 11 PM, a courier is matched and picks them up within 30 minutes.",
+        "FoodSaathi changed our banquet operations completely. Instead of throwing away hundreds of fresh buffet portions at 11 PM, a courier is matched and picks them up within 30 minutes.",
       author: "Chef Ranveer Kapoor",
       role: "Executive Chef, The Grand Royale Hotel",
       image:

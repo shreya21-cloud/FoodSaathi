@@ -1,3 +1,6 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+require('dotenv').config();
 const mongoose = require('mongoose');
 
 let isConnected = false;
@@ -23,7 +26,7 @@ const connectDB = async () => {
     return mongoose.connection;
   }
 
-  const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/foodrescue_ai';
+  const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/foodsaathi';
   const maskedURI = sanitizeURI(mongoURI);
 
   try {
@@ -48,7 +51,7 @@ const connectDB = async () => {
   } catch (error) {
     isConnected = false;
     console.warn(`[MongoDB Notice] Database connection unavailable (${maskedURI}): ${error.message}`);
-    console.info(`[FoodRescue AI] Server operating in resilient fallback mode (in-memory demo state ready).`);
+    console.info(`[FoodSaathi] Server operating in resilient fallback mode (in-memory demo state ready).`);
     return null;
   }
 };

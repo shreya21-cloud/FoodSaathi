@@ -1,7 +1,7 @@
 {
-  "name": "foodrescue-ai-backend",
+  "name": "foodsaathi-backend",
   "version": "1.0.0",
-  "description": "Backend REST API for FoodRescue AI",
+  "description": "Backend REST API for FoodSaathi",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

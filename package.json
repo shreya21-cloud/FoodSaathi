@@ -1,5 +1,5 @@
 {
-  "name": "foodrescue-ai",
+  "name": "foodsaathi",
   "version": "1.0.0",
   "description": "AI-Powered Smart Food Donation Platform & Rescue Network",
   "main": "backend/server.js",
@@ -19,7 +19,7 @@
     "nodejs",
     "leaflet"
   ],
-  "author": "FoodRescue AI Team",
+  "author": "FoodSaathi Team",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"

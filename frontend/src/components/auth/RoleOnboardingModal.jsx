@@ -19,7 +19,7 @@ export const RoleOnboardingModal = ({ isOpen, onClose, role = 'donor', userName 
 
   const roleDetails = {
     donor: {
-      title: 'Welcome to FoodRescue AI, Food Donor! 🍲',
+      title: 'Welcome to FoodSaathi, Food Donor! 🍲',
       badge: 'Food Donor Onboarding',
       icon: Utensils,
       color: 'emerald',
@@ -41,7 +41,7 @@ export const RoleOnboardingModal = ({ isOpen, onClose, role = 'donor', userName 
       ],
     },
     ngo: {
-      title: 'Welcome to FoodRescue AI, Partner NGO! 🏢',
+      title: 'Welcome to FoodSaathi, Partner NGO! 🏢',
       badge: 'Shelter & Food Bank Onboarding',
       icon: Building2,
       color: 'purple',
@@ -63,7 +63,7 @@ export const RoleOnboardingModal = ({ isOpen, onClose, role = 'donor', userName 
       ],
     },
     volunteer: {
-      title: 'Welcome to FoodRescue AI, Rescue Courier! 🛵',
+      title: 'Welcome to FoodSaathi, Rescue Courier! 🛵',
       badge: 'Volunteer Courier Onboarding',
       icon: Bike,
       color: 'blue',
@@ -131,7 +131,7 @@ export const RoleOnboardingModal = ({ isOpen, onClose, role = 'donor', userName 
 
         <div className="py-5 space-y-4 relative z-10">
           <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-            {userName ? `Hi ${userName}, y` : 'Y'}our account is fully active. Here is how your role powers the FoodRescue AI zero-waste network:
+            {userName ? `Hi ${userName}, y` : 'Y'}our account is fully active. Here is how your role powers the FoodSaathi zero-waste network:
           </p>
 
           <div className="space-y-3">

@@ -1,8 +1,7 @@
 const Donation = require('../models/Donation');
 const { getDBStatus } = require('../config/db');
-const { donations: mockDonations, ngos: mockNGOs } = require('../seed/seedData');
 
-let memoryDonations = JSON.parse(JSON.stringify(mockDonations));
+let memoryDonations = [];
 
 // Helper: AI Food Priority Classifier
 const classifyPriority = (expiryTime, category, mealCount) => {

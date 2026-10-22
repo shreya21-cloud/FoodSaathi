@@ -16,7 +16,7 @@ import {
 
 export const SettingsPage = () => {
   const { user, role, switchRole } = useAuth();
-  const { isBackendConnected, resetDemoData, refreshFromBackend } = useData();
+  const { isBackendConnected, refreshFromBackend } = useData();
   const { addToast } = useToast();
 
   const [name, setName] = useState(user?.name || '');
@@ -28,14 +28,7 @@ export const SettingsPage = () => {
     addToast({ title: 'Profile Updated', message: 'Settings saved successfully.', type: 'success' });
   };
 
-  const handleResetData = () => {
-    resetDemoData();
-    addToast({
-      title: 'Demo Data Reset',
-      message: 'All donations, NGOs, volunteers, and deliveries restored to initial seed state.',
-      type: 'info',
-    });
-  };
+
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 text-xs text-left">
@@ -139,14 +132,6 @@ export const SettingsPage = () => {
             className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700 transition-colors"
           >
             Check Backend Connectivity
-          </button>
-
-          <button
-            onClick={handleResetData}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100 text-amber-800 font-bold transition-all"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Reset Demo Seed Data</span>
           </button>
         </div>
       </div>

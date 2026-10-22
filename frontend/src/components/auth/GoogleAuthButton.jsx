@@ -55,7 +55,7 @@ export const GoogleAuthButton = ({
             });
           }
         } catch (e) {
-          console.warn('[FoodRescue AI Google Init]', e);
+          console.warn('[FoodSaathi Google Init]', e);
         }
       };
       document.body.appendChild(script);
@@ -68,7 +68,7 @@ export const GoogleAuthButton = ({
           cancel_on_tap_outside: true,
         });
       } catch (e) {
-        console.warn('[FoodRescue AI Google Re-init]', e);
+        console.warn('[FoodSaathi Google Re-init]', e);
       }
     }
   }, [isConfigured, envClientId, customClientId]);
@@ -118,7 +118,7 @@ export const GoogleAuthButton = ({
       try {
         window.google.accounts.id.prompt((notification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            console.info('[FoodRescue AI Google Prompt status]', notification);
+            console.info('[FoodSaathi Google Prompt status]', notification);
           }
         });
       } catch (err) {
@@ -139,7 +139,7 @@ export const GoogleAuthButton = ({
       const mockPayload = {
         iss: 'https://accounts.google.com',
         sub: 'google_1092837465' + Date.now(),
-        email: 'alex.google.rescuer@foodrescue.ai',
+        email: 'alex.google.rescuer@foodsaathi.org',
         email_verified: true,
         name: 'Alex Rivera (Google)',
         picture: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',

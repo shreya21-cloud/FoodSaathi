@@ -153,7 +153,7 @@ export const RegisterPage = () => {
 
       addToast({
         title: 'Account Created Successfully! 🎉',
-        message: `Welcome to FoodRescue AI as a ${formData.role.toUpperCase()}.`,
+        message: `Welcome to FoodSaathi as a ${formData.role.toUpperCase()}.`,
         type: 'success',
         triggerConfetti: true,
       });

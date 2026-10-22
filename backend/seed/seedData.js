@@ -1,4 +1,4 @@
-// Realistic seed data for FoodRescue AI
+// Realistic seed data for FoodSaathi
 const now = new Date();
 const hoursFromNow = (h) => new Date(now.getTime() + h * 60 * 60 * 1000);
 const hoursAgo = (h) => new Date(now.getTime() - h * 60 * 60 * 1000);
@@ -7,7 +7,7 @@ const users = [
   {
     _id: '66a100000000000000000001',
     name: 'Green Feast Caterers',
-    email: 'donor@foodrescue.ai',
+    email: 'donor@foodsaathi.org',
     password: 'password123',
     role: 'donor',
     organizationName: 'Green Feast Catering & Banquet Hall',
@@ -18,7 +18,7 @@ const users = [
   {
     _id: '66a100000000000000000002',
     name: 'The Grand Royale Hotel',
-    email: 'hotel@foodrescue.ai',
+    email: 'hotel@foodsaathi.org',
     password: 'password123',
     role: 'donor',
     organizationName: 'The Grand Royale Luxury Hotel',
@@ -29,7 +29,7 @@ const users = [
   {
     _id: '66a100000000000000000003',
     name: 'Hope Food Shelter',
-    email: 'ngo@foodrescue.ai',
+    email: 'ngo@foodsaathi.org',
     password: 'password123',
     role: 'ngo',
     organizationName: 'Hope Food Shelter & Nutrition Mission',
@@ -40,7 +40,7 @@ const users = [
   {
     _id: '66a100000000000000000004',
     name: 'Alex Rivera',
-    email: 'volunteer@foodrescue.ai',
+    email: 'volunteer@foodsaathi.org',
     password: 'password123',
     role: 'volunteer',
     organizationName: 'Active Food Rescuer Squad',
@@ -51,10 +51,10 @@ const users = [
   {
     _id: '66a100000000000000000005',
     name: 'System Admin',
-    email: 'admin@foodrescue.ai',
+    email: 'admin@foodsaathi.org',
     password: 'password123',
     role: 'admin',
-    organizationName: 'FoodRescue AI HQ',
+    organizationName: 'FoodSaathi HQ',
     phone: '+91 98000 00000',
     address: 'AI Innovation Hub, Cyber City, 110037',
     location: { lat: 28.6139, lng: 77.2090 },
@@ -67,7 +67,7 @@ const ngos = [
     organizationName: 'Hope Food Shelter',
     registrationNumber: 'NGO-DEL-2021-9921',
     contactPerson: 'Dr. Sunita Sharma',
-    email: 'ngo@foodrescue.ai',
+    email: 'ngo@foodsaathi.org',
     phone: '+91 98333 44556',
     address: 'Pahar Ganj Community Care, New Delhi, 110055',
     location: { lat: 28.6420, lng: 77.2140 },
@@ -85,7 +85,7 @@ const ngos = [
     organizationName: 'Annamrita Child Nutrition Foundation',
     registrationNumber: 'NGO-DEL-2019-4412',
     contactPerson: 'Rajesh Verma',
-    email: 'annamrita@foodrescue.ai',
+    email: 'annamrita@foodsaathi.org',
     phone: '+91 98555 66778',
     address: 'Lajpat Nagar IV, New Delhi, 110024',
     location: { lat: 28.5685, lng: 77.2433 },
@@ -103,7 +103,7 @@ const ngos = [
     organizationName: 'Robin Hood Food Care',
     registrationNumber: 'NGO-DEL-2022-8103',
     contactPerson: 'Priya Mukherjee',
-    email: 'robinhood@foodrescue.ai',
+    email: 'robinhood@foodsaathi.org',
     phone: '+91 98666 77889',
     address: 'Hauz Khas Village Road, New Delhi, 110016',
     location: { lat: 28.5494, lng: 77.2001 },
@@ -121,7 +121,7 @@ const ngos = [
     organizationName: 'Roti Bank & Relief Network',
     registrationNumber: 'NGO-DEL-2020-3321',
     contactPerson: 'Karan Mehra',
-    email: 'rotibank@foodrescue.ai',
+    email: 'rotibank@foodsaathi.org',
     phone: '+91 98777 88990',
     address: 'Chandni Chowk Red Cross Wing, Old Delhi, 110006',
     location: { lat: 28.6562, lng: 77.2301 },
@@ -139,7 +139,7 @@ const ngos = [
     organizationName: 'Mother Teresa Community Kitchen',
     registrationNumber: 'NGO-DEL-2018-1120',
     contactPerson: 'Sister Clare',
-    email: 'motherteresa@foodrescue.ai',
+    email: 'motherteresa@foodsaathi.org',
     phone: '+91 98888 99001',
     address: 'Civil Lines Welfare Campus, North Delhi, 110054',
     location: { lat: 28.6812, lng: 77.2226 },
@@ -158,7 +158,7 @@ const volunteers = [
   {
     _id: '66c100000000000000000001',
     fullName: 'Alex Rivera',
-    email: 'volunteer@foodrescue.ai',
+    email: 'volunteer@foodsaathi.org',
     phone: '+91 98444 55667',
     vehicleType: 'Motorbike',
     isAvailable: true,
@@ -344,7 +344,7 @@ const donations = [
     matchedNGO: { id: '66b100000000000000000001', name: 'Hope Food Shelter' },
     pickupAddress: 'Cafeteria Wing B, Cyber Greens Tower, Okhla Phase 3, New Delhi',
     location: { lat: 28.5355, lng: 77.2730 },
-    pickupInstructions: 'Security gate passes already generated for FoodRescue AI volunteers.',
+    pickupInstructions: 'Security gate passes already generated for FoodSaathi volunteers.',
     imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=60',
   },
   {

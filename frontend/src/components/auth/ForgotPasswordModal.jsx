@@ -139,7 +139,7 @@ export const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {!hasTokenPhase ? (
           <form onSubmit={handleRequestReset} className="py-4 space-y-4">
             <p className="text-slate-600 leading-relaxed text-xs">
-              Enter the email address associated with your FoodRescue AI account. If an account is found, a secure reset token will be issued.
+              Enter the email address associated with your FoodSaathi account. If an account is found, a secure reset token will be issued.
             </p>
 
             <div>
@@ -151,7 +151,7 @@ export const ForgotPasswordModal = ({ isOpen, onClose }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  placeholder="donor@foodrescue.ai"
+                  placeholder="donor@foodsaathi.org"
                   className="w-full rounded-xl border border-slate-200 pl-9 pr-3 py-2.5 text-xs text-slate-800 focus:border-emerald-600 focus:outline-hidden"
                 />
               </div>

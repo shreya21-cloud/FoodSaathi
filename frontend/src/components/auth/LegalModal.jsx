@@ -22,7 +22,7 @@ export const LegalModal = ({ isOpen, onClose, type = 'terms' }) => {
             </div>
             <div>
               <h3 id="legal-modal-title" className="text-base font-bold text-slate-900">
-                {isTerms ? 'FoodRescue AI Terms of Service' : 'FoodRescue AI Privacy Policy'}
+                {isTerms ? 'FoodSaathi Terms of Service' : 'FoodSaathi Privacy Policy'}
               </h3>
               <p className="text-[11px] text-slate-500">Last updated: October 2026</p>
             </div>
@@ -44,7 +44,7 @@ export const LegalModal = ({ isOpen, onClose, type = 'terms' }) => {
               <section>
                 <h4 className="font-bold text-slate-900 mb-1 text-xs">1. Purpose and Network Mission</h4>
                 <p>
-                  FoodRescue AI connects food donors (restaurants, caterers, hotels, grocers), partner NGOs (shelters, food banks), and volunteer couriers to minimize food waste and alleviate community hunger. By registering an account, you agree to uphold food safety, transparency, and timely communication.
+                  FoodSaathi connects food donors (restaurants, caterers, hotels, grocers), partner NGOs (shelters, food banks), and volunteer couriers to minimize food waste and alleviate community hunger. By registering an account, you agree to uphold food safety, transparency, and timely communication.
                 </p>
               </section>
 
@@ -58,7 +58,7 @@ export const LegalModal = ({ isOpen, onClose, type = 'terms' }) => {
               <section>
                 <h4 className="font-bold text-slate-900 mb-1 text-xs">3. Courier & NGO Responsibilities</h4>
                 <p>
-                  Partner NGOs and volunteer couriers commit to transporting and distributing food within the maximum temperature safety window specified by FoodRescue AI fresh timers. Commercial resale of donated food is strictly prohibited.
+                  Partner NGOs and volunteer couriers commit to transporting and distributing food within the maximum temperature safety window specified by FoodSaathi fresh timers. Commercial resale of donated food is strictly prohibited.
                 </p>
               </section>
 
@@ -74,7 +74,7 @@ export const LegalModal = ({ isOpen, onClose, type = 'terms' }) => {
               <section>
                 <h4 className="font-bold text-slate-900 mb-1 text-xs">1. Information We Collect</h4>
                 <p>
-                  FoodRescue AI collects minimal necessary operational information including organization names, contact telephone numbers, operating addresses, and pickup/delivery coordinates required to calculate optimal route matches.
+                  FoodSaathi collects minimal necessary operational information including organization names, contact telephone numbers, operating addresses, and pickup/delivery coordinates required to calculate optimal route matches.
                 </p>
               </section>
 

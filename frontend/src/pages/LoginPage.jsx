@@ -11,17 +11,12 @@ import {
   Mail,
   Eye,
   EyeOff,
-  ArrowRight,
   AlertCircle,
-  Utensils,
-  Building2,
-  Bike,
-  ShieldCheck,
   CheckCircle2,
 } from 'lucide-react';
 
 export const LoginPage = () => {
-  const { login, loginAsDemo, loading, isAuthenticated, handleExternalToken } = useAuth();
+  const { login, loading, isAuthenticated, handleExternalToken } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,7 +78,7 @@ export const LoginPage = () => {
     try {
       await login(email, password, rememberMe);
       addToast({
-        title: 'Welcome Back to FoodRescue AI! 🌿',
+        title: 'Welcome Back to FoodSaathi! 🌿',
         message: 'Successfully authenticated. Accessing live dashboard.',
         type: 'success',
       });
@@ -93,15 +88,7 @@ export const LoginPage = () => {
     }
   };
 
-  const handleDemoClick = (roleKey) => {
-    const user = loginAsDemo(roleKey);
-    addToast({
-      title: `Logged in as Demo ${roleKey.toUpperCase()}`,
-      message: `Active session set to ${user.name}.`,
-      type: 'success',
-    });
-    navigate(destination, { replace: true });
-  };
+
 
   return (
     <AuthLayout
@@ -229,74 +216,11 @@ export const LoginPage = () => {
             className="w-full py-3.5 px-4 rounded-2xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-900/15 hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed group"
           >
             <LogIn size={16} className="transition-transform group-hover:translate-x-0.5" />
-            <span>{loading ? 'Authenticating...' : 'Sign In to FoodRescue AI'}</span>
+            <span>{loading ? 'Authenticating...' : 'Sign In to FoodSaathi'}</span>
           </button>
         </form>
 
-        {/* 1-Click Fast Demo Logins Section */}
-        <div className="pt-4 border-t border-slate-100">
-          <div className="text-center text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center justify-center gap-1.5">
-            <span>⚡ Instant Demo Profiles</span>
-          </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => handleDemoClick('donor')}
-              className="p-2.5 rounded-2xl border border-emerald-200/80 bg-emerald-50/60 hover:bg-emerald-100 text-emerald-950 font-bold transition flex items-center gap-2 text-left"
-            >
-              <div className="w-7 h-7 rounded-xl bg-emerald-700 text-white grid place-items-center shrink-0 shadow-xs">
-                <Utensils size={13} />
-              </div>
-              <div className="min-w-0">
-                <div className="truncate text-[11px] font-bold">Green Feast</div>
-                <div className="text-[9px] text-emerald-700 font-normal">Food Donor</div>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleDemoClick('ngo')}
-              className="p-2.5 rounded-2xl border border-purple-200/80 bg-purple-50/60 hover:bg-purple-100 text-purple-950 font-bold transition flex items-center gap-2 text-left"
-            >
-              <div className="w-7 h-7 rounded-xl bg-purple-700 text-white grid place-items-center shrink-0 shadow-xs">
-                <Building2 size={13} />
-              </div>
-              <div className="min-w-0">
-                <div className="truncate text-[11px] font-bold">Hope Shelter</div>
-                <div className="text-[9px] text-purple-700 font-normal">Partner NGO</div>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleDemoClick('volunteer')}
-              className="p-2.5 rounded-2xl border border-blue-200/80 bg-blue-50/60 hover:bg-blue-100 text-blue-950 font-bold transition flex items-center gap-2 text-left"
-            >
-              <div className="w-7 h-7 rounded-xl bg-blue-700 text-white grid place-items-center shrink-0 shadow-xs">
-                <Bike size={13} />
-              </div>
-              <div className="min-w-0">
-                <div className="truncate text-[11px] font-bold">Alex Rivera</div>
-                <div className="text-[9px] text-blue-700 font-normal">Rescue Courier</div>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleDemoClick('admin')}
-              className="p-2.5 rounded-2xl border border-slate-300 bg-slate-100/80 hover:bg-slate-200 text-slate-900 font-bold transition flex items-center gap-2 text-left"
-            >
-              <div className="w-7 h-7 rounded-xl bg-slate-800 text-white grid place-items-center shrink-0 shadow-xs">
-                <ShieldCheck size={13} />
-              </div>
-              <div className="min-w-0">
-                <div className="truncate text-[11px] font-bold">Platform Admin</div>
-                <div className="text-[9px] text-slate-500 font-normal">HQ Oversight</div>
-              </div>
-            </button>
-          </div>
-        </div>
 
         {/* Link to Register */}
         <div className="text-center text-slate-500 text-xs pt-1">

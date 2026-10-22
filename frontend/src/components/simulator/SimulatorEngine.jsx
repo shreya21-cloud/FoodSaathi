@@ -466,7 +466,7 @@ export const SimulatorEngine = () => {
               <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-200">
                 <div className="font-bold text-rose-800 text-xs flex items-center gap-1.5 mb-2">
                   <AlertTriangle className="w-4 h-4 text-rose-600" />
-                  <span>Without FoodRescue AI (Baseline Scenario)</span>
+                  <span>Without FoodSaathi (Baseline Scenario)</span>
                 </div>
                 <div className="space-y-1 text-slate-700 text-xs">
                   <p>• <strong>{summary.baselineWastageKg} kg</strong> of surplus food dumped in municipal landfill</p>
@@ -479,7 +479,7 @@ export const SimulatorEngine = () => {
               <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200">
                 <div className="font-bold text-emerald-800 text-xs flex items-center gap-1.5 mb-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>With FoodRescue AI Redistribution</span>
+                  <span>With FoodSaathi Redistribution</span>
                 </div>
                 <div className="space-y-1 text-slate-700 text-xs">
                   <p>• <strong>{summary.totalMealsAllocated} meals ({parseFloat((summary.totalMealsAllocated * 0.45).toFixed(1))} kg)</strong> immediately redistributed</p>
