@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useData } from '../context/DataContext';
-import { StatCard } from '../components/common/StatCard';
-import { PriorityBadge, StatusBadge } from '../components/common/Badge';
-import { FreshnessTimer } from '../components/common/FreshnessTimer';
-import { DonationFormModal } from '../components/donations/DonationFormModal';
-import { MatchingModal } from '../components/ai/MatchingModal';
-import { DuplicateWarningModal } from '../components/donations/DuplicateWarningModal';
-import { DonationDetailModal } from '../components/donations/DonationDetailModal';
+import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useData } from "../context/DataContext";
+import { StatCard } from "../components/common/StatCard";
+import { PriorityBadge, StatusBadge } from "../components/common/Badge";
+import { FreshnessTimer } from "../components/common/FreshnessTimer";
+import { DonationFormModal } from "../components/donations/DonationFormModal";
+import { MatchingModal } from "../components/ai/MatchingModal";
+import { DuplicateWarningModal } from "../components/donations/DuplicateWarningModal";
+import { DonationDetailModal } from "../components/donations/DonationDetailModal";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -18,10 +19,8 @@ import {
   PieChart,
   Pie,
   Cell,
-  BarChart,
-  Bar,
   Legend,
-} from 'recharts';
+} from "recharts";
 import {
   Utensils,
   Building2,
@@ -31,379 +30,738 @@ import {
   Sparkles,
   PlusCircle,
   TrendingUp,
-  MapPin,
-  Clock,
-  ArrowRight,
-  ShieldCheck,
-  CheckCircle2,
   Activity,
   Layers,
-} from 'lucide-react';
+  ArrowRight,
+  MapPin,
+  Clock,
+  PackageOpen,
+  BarChart3,
+} from "lucide-react";
+
+const CATEGORY_COLORS = [
+  "#059669",
+  "#3b82f6",
+  "#8b5cf6",
+  "#f59e0b",
+  "#06b6d4",
+  "#f97316",
+  "#64748b",
+];
+
+const getDate = (value) => {
+  if (!value) return null;
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const getCategoryName = (donation) => {
+  const category = donation?.category || donation?.foodCategory;
+  if (!category) return "Other";
+
+  return String(category)
+    .replace(/[-_]/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+};
+
+const formatNumber = (value) => Number(value || 0).toLocaleString();
 
 export const DashboardPage = () => {
   const { user, role } = useAuth();
-  const { summaryMetrics, donations, ngos, volunteers, deliveries } = useData();
 
-  // Modals state
+  const {
+    summaryMetrics = {},
+    donations = [],
+    ngos = [],
+    volunteers = [],
+    deliveries = [],
+  } = useData();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedDonationForMatch, setSelectedDonationForMatch] = useState(null);
-  const [selectedDonationForDetail, setSelectedDonationForDetail] = useState(null);
+  const [selectedDonationForMatch, setSelectedDonationForMatch] =
+    useState(null);
+  const [selectedDonationForDetail, setSelectedDonationForDetail] =
+    useState(null);
   const [duplicateModalData, setDuplicateModalData] = useState(null);
 
-  // Weekly Trend Chart Data
-  const weeklyData = [
-    { day: 'Mon', rescued: 3200, target: 2800 },
-    { day: 'Tue', rescued: 3850, target: 3000 },
-    { day: 'Wed', rescued: 4100, target: 3500 },
-    { day: 'Thu', rescued: 3900, target: 3500 },
-    { day: 'Fri', rescued: 4800, target: 4000 },
-    { day: 'Sat', rescued: 5600, target: 4500 },
-    { day: 'Sun', rescued: 5900, target: 4800 },
-  ];
+  const safeDonations = Array.isArray(donations) ? donations : [];
+  const safeNGOs = Array.isArray(ngos) ? ngos : [];
+  const safeVolunteers = Array.isArray(volunteers) ? volunteers : [];
+  const safeDeliveries = Array.isArray(deliveries) ? deliveries : [];
 
-  // Category Distribution for Donut Chart
-  const categoryData = [
-    { name: 'Cooked Meals', value: 42, color: '#10b981' },
-    { name: 'Bakery', value: 24, color: '#3b82f6' },
-    { name: 'Produce', value: 18, color: '#8b5cf6' },
-    { name: 'Dairy', value: 12, color: '#f59e0b' },
-    { name: 'Packaged', value: 4, color: '#06b6d4' },
-  ];
-
-  // Urgent Critical Donations
-  const urgentDonations = donations.filter(
-    (d) => d.priority === 'Critical' && d.status === 'Available'
+  const availableDonations = useMemo(
+    () => safeDonations.filter((item) => item.status === "Available"),
+    [safeDonations],
   );
 
+  const urgentDonations = useMemo(
+    () =>
+      availableDonations.filter(
+        (item) => String(item.priority || "").toLowerCase() === "critical",
+      ),
+    [availableDonations],
+  );
+
+  const recentDonations = useMemo(
+    () =>
+      [...safeDonations]
+        .sort((a, b) => {
+          const dateA = getDate(a.createdAt || a.updatedAt)?.getTime() || 0;
+          const dateB = getDate(b.createdAt || b.updatedAt)?.getTime() || 0;
+          return dateB - dateA;
+        })
+        .slice(0, 4),
+    [safeDonations],
+  );
+
+  const recentDeliveries = useMemo(
+    () =>
+      [...safeDeliveries]
+        .sort((a, b) => {
+          const dateA = getDate(a.assignedAt || a.createdAt)?.getTime() || 0;
+          const dateB = getDate(b.assignedAt || b.createdAt)?.getTime() || 0;
+          return dateB - dateA;
+        })
+        .slice(0, 4),
+    [safeDeliveries],
+  );
+
+  const categoryData = useMemo(() => {
+    const counts = new Map();
+
+    safeDonations.forEach((donation) => {
+      const category = getCategoryName(donation);
+      const quantity = Math.max(0, Number(donation.mealCount) || 0);
+
+      counts.set(category, (counts.get(category) || 0) + quantity);
+    });
+
+    const total = [...counts.values()].reduce((sum, value) => sum + value, 0);
+
+    return [...counts.entries()]
+      .map(([name, value], index) => ({
+        name,
+        value,
+        percentage: total ? Math.round((value / total) * 100) : 0,
+        color: CATEGORY_COLORS[index % CATEGORY_COLORS.length],
+      }))
+      .sort((a, b) => b.value - a.value);
+  }, [safeDonations]);
+
+  const weeklyData = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const days = Array.from({ length: 7 }, (_, index) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() - (6 - index));
+
+      return {
+        date,
+        key: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
+        day: date.toLocaleDateString("en-US", { weekday: "short" }),
+        rescued: 0,
+        listings: 0,
+      };
+    });
+
+    const dayMap = new Map(days.map((day) => [day.key, day]));
+
+    safeDonations.forEach((donation) => {
+      const date = getDate(donation.createdAt || donation.updatedAt);
+      if (!date) return;
+
+      const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+      const day = dayMap.get(key);
+      if (!day) return;
+
+      day.listings += 1;
+
+      if (["Delivered", "Completed", "Rescued"].includes(donation.status)) {
+        day.rescued += Math.max(0, Number(donation.mealCount) || 0);
+      }
+    });
+
+    return days.map(({ date, key, ...day }) => day);
+  }, [safeDonations]);
+
+  const hasWeeklyData = weeklyData.some(
+    (day) => day.listings > 0 || day.rescued > 0,
+  );
+
+  const activeDeliveryCount = safeDeliveries.filter((delivery) =>
+    ["Assigned", "Accepted", "Picked Up"].includes(delivery.status),
+  ).length;
+
+  const welcomeMessage =
+    role === "donor"
+      ? "List surplus food, connect with local NGOs, and help good food reach the people who need it."
+      : role === "ngo"
+        ? "Manage food requirements, review incoming donations, and coordinate meal distribution."
+        : role === "volunteer"
+          ? "Review your rescue deliveries, coordinate pickups, and help meals reach their destination."
+          : "Monitor food rescue activity, coordinate resources, and review the network’s current operations.";
+
   return (
-    <div className="space-y-6 text-xs text-left">
-      {/* Top Welcome Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-white p-5 border border-slate-200 shadow-sm">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Welcome back, {user?.name || 'Rescuer'}!
-            </h1>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase">
-              {role} View
+    <div className="space-y-6 text-left text-sm">
+      {/* Welcome header */}
+      <section className="flex flex-col gap-5 rounded-2xl border border-slate-200 bg-gradient-to-r from-white via-white to-emerald-50/70 p-5 shadow-sm sm:p-7 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[11px] font-semibold capitalize text-emerald-800">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              {role || "User"}
+            </span>
+            <span className="text-xs text-slate-400">
+              Food rescue operations
             </span>
           </div>
-          <p className="mt-1 text-slate-500 text-xs">
-            {role === 'donor'
-              ? 'List surplus food and monitor real-time AI matchmaking and courier pickups.'
-              : role === 'ngo'
-              ? 'Track incoming meal distributions and manage daily shelter food demands.'
-              : role === 'volunteer'
-              ? 'View assigned rescue dispatches and report delivery handoffs.'
-              : 'Network oversight: real-time algorithmic food rescue operations across metro hubs.'}
+
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Welcome back, {user?.name || "Rescuer"}
+          </h1>
+
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+            {welcomeMessage}
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 hover:scale-105 transition-all"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>Donate Surplus</span>
-          </button>
+        <button
+          type="button"
+          onClick={() => setIsCreateModalOpen(true)}
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-800 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+        >
+          <PlusCircle className="h-4 w-4" />
+          Donate surplus food
+        </button>
+      </section>
+
+      {/* Summary metrics */}
+      <section>
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h2 className="text-base font-semibold text-slate-900">
+              Network overview
+            </h2>
+            <p className="mt-1 text-xs text-slate-500">
+              A snapshot of the current rescue operation
+            </p>
+          </div>
+          <span className="text-xs text-slate-400">Summary metrics</span>
         </div>
-      </div>
 
-      {/* KPI Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-        <StatCard
-          title="Meals Rescued"
-          value={summaryMetrics.totalMealsRescued.toLocaleString()}
-          subtitle="Total community portions"
-          icon={Utensils}
-          trend="+18.4%"
-          colorScheme="emerald"
-        />
-        <StatCard
-          title="Available Food"
-          value={summaryMetrics.availableDonationsCount}
-          subtitle="Ready for pickup"
-          icon={Layers}
-          colorScheme="teal"
-        />
-        <StatCard
-          title="Active NGOs"
-          value={summaryMetrics.activeNGOsCount}
-          subtitle="Receiving shelters"
-          icon={Building2}
-          colorScheme="purple"
-        />
-        <StatCard
-          title="Volunteers"
-          value={summaryMetrics.availableVolunteersCount}
-          subtitle="Active on roads"
-          icon={Bike}
-          colorScheme="blue"
-        />
-        <StatCard
-          title="Urgent Alerts"
-          value={summaryMetrics.urgentDonationsCount}
-          subtitle="Under 3h shelf life"
-          icon={AlertTriangle}
-          colorScheme="rose"
-        />
-        <StatCard
-          title="Deliveries"
-          value={summaryMetrics.activeDeliveriesCount}
-          subtitle="En-route right now"
-          icon={Truck}
-          colorScheme="amber"
-        />
-      </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <StatCard
+            title="Meals Rescued"
+            value={formatNumber(summaryMetrics.totalMealsRescued)}
+            subtitle="Total community portions"
+            icon={Utensils}
+            colorScheme="emerald"
+          />
 
-      {/* Critical Food Alerts Ticker Banner (If any urgent food exists) */}
+          <StatCard
+            title="Available Food"
+            value={formatNumber(summaryMetrics.availableDonationsCount)}
+            subtitle="Listings ready for pickup"
+            icon={Layers}
+            colorScheme="blue"
+          />
+
+          <StatCard
+            title="Active NGOs"
+            value={formatNumber(summaryMetrics.activeNGOsCount)}
+            subtitle="Partner organisations"
+            icon={Building2}
+            colorScheme="purple"
+          />
+
+          <StatCard
+            title="Available Volunteers"
+            value={formatNumber(summaryMetrics.availableVolunteersCount)}
+            subtitle="Ready to help"
+            icon={Bike}
+            colorScheme="blue"
+          />
+
+          <StatCard
+            title="Urgent Alerts"
+            value={formatNumber(summaryMetrics.urgentDonationsCount)}
+            subtitle="Critical food listings"
+            icon={AlertTriangle}
+            colorScheme="rose"
+          />
+
+          <StatCard
+            title="Active Deliveries"
+            value={formatNumber(
+              summaryMetrics.activeDeliveriesCount ?? activeDeliveryCount,
+            )}
+            subtitle="Currently in progress"
+            icon={Truck}
+            colorScheme="amber"
+          />
+        </div>
+      </section>
+
+      {/* Critical food alerts */}
       {urgentDonations.length > 0 && (
-        <div className="rounded-2xl bg-rose-50 border border-rose-200 p-4 sm:p-5">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <span className="flex h-3 w-3 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500" />
+        <section className="rounded-2xl border border-rose-200 bg-rose-50/70 p-4 sm:p-5">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-100 text-rose-700">
+                <AlertTriangle className="h-4 w-4" />
               </span>
-              <h3 className="font-bold text-sm text-rose-900">
-                Critical Food Rescues Required ({urgentDonations.length})
-              </h3>
+              <div>
+                <h2 className="font-semibold text-rose-950">
+                  Critical food rescues
+                </h2>
+                <p className="mt-0.5 text-xs text-rose-700">
+                  {urgentDonations.length} available listing
+                  {urgentDonations.length === 1 ? "" : "s"} need attention
+                </p>
+              </div>
             </div>
-            <span className="text-[11px] text-rose-700 font-semibold">Immediate action recommended</span>
+
+            <Link
+              to="/donations"
+              className="inline-flex items-center gap-1 self-start text-xs font-semibold text-rose-800 hover:text-rose-950"
+            >
+              Review donations <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {urgentDonations.map((item) => (
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+            {urgentDonations.slice(0, 4).map((item) => (
               <div
                 key={item._id}
-                className="rounded-xl bg-white p-3.5 border border-rose-200/80 shadow-xs flex items-center justify-between gap-3"
+                className="flex min-w-0 flex-col justify-between gap-3 rounded-xl border border-rose-100 bg-white p-4 sm:flex-row sm:items-center"
               >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <PriorityBadge priority="Critical" size="xs" />
-                    <span className="font-bold text-slate-900 text-xs truncate max-w-[200px]">
-                      {item.foodName}
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <PriorityBadge priority={item.priority} size="xs" />
+                    <span className="truncate font-semibold text-slate-900">
+                      {item.foodName || "Food donation"}
                     </span>
                   </div>
-                  <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-2">
-                    <span>{item.mealCount} meals</span>
-                    <span>•</span>
-                    <span className="truncate">📍 {item.pickupAddress}</span>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                    <span>{formatNumber(item.mealCount)} meals</span>
+                    {item.pickupAddress && (
+                      <span className="inline-flex min-w-0 items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">{item.pickupAddress}</span>
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => setSelectedDonationForMatch(item)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all flex-shrink-0"
+                  className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-emerald-800 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-900"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-200" />
-                  <span>Match Now</span>
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Match now
                 </button>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Main Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Weekly Trend (2 Columns) */}
-        <div className="lg:col-span-2 rounded-2xl bg-white p-5 border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
+      {/* Charts */}
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-3">
+        <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 xl:col-span-2">
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-emerald-600" />
-                <span>Daily Food Rescue Volume (Last 7 Days)</span>
-              </h3>
-              <p className="text-[11px] text-slate-400">Rescued Meals vs Daily Target Demand</p>
+              <h2 className="flex items-center gap-2 font-semibold text-slate-900">
+                <TrendingUp className="h-4 w-4 text-emerald-700" />
+                Daily food rescue volume
+              </h2>
+              <p className="mt-1 text-xs text-slate-500">
+                Donation records from the last 7 days
+              </p>
             </div>
-            <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-[11px]">
-              +24% Weekly Growth
+            <span className="self-start rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600">
+              Last 7 days
             </span>
           </div>
 
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={weeklyData}>
-                <defs>
-                  <linearGradient id="colorRescued" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
-                  </linearGradient>
-                  <linearGradient id="colorTarget" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="day" tick={{ fontSize: 11 }} stroke="#94a3b8" />
-                <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" />
-                <Tooltip contentStyle={{ fontSize: '11px', borderRadius: '12px' }} />
-                <Legend wrapperStyle={{ fontSize: '11px' }} />
-                <Area
-                  type="monotone"
-                  dataKey="rescued"
-                  name="Meals Rescued"
-                  stroke="#10b981"
-                  strokeWidth={2.5}
-                  fillOpacity={1}
-                  fill="url(#colorRescued)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="target"
-                  name="Target Demand"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  strokeDasharray="4 4"
-                  fillOpacity={1}
-                  fill="url(#colorTarget)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Category Distribution (1 Column) */}
-        <div className="rounded-2xl bg-white p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-bold text-sm text-slate-900">Food Category Share</h3>
-              <span className="text-[11px] text-slate-400">By Total Portions</span>
-            </div>
-
-            <div className="h-48 w-full">
+          {hasWeeklyData ? (
+            <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={75}
-                    paddingAngle={3}
-                  >
-                    {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={{ fontSize: '11px', borderRadius: '10px' }} />
-                </PieChart>
+                <AreaChart
+                  data={weeklyData}
+                  margin={{ top: 8, right: 8, left: -18, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="dashboardRescuedFill"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="#059669"
+                        stopOpacity={0.25}
+                      />
+                      <stop offset="95%" stopColor="#059669" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+
+                  <XAxis
+                    dataKey="day"
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={{ stroke: "#e2e8f0" }}
+                  />
+
+                  <YAxis
+                    tick={{ fontSize: 10 }}
+                    tickLine={false}
+                    axisLine={false}
+                    width={42}
+                  />
+
+                  <Tooltip
+                    contentStyle={{
+                      fontSize: 12,
+                      borderRadius: 10,
+                      border: "1px solid #e2e8f0",
+                    }}
+                  />
+
+                  <Legend wrapperStyle={{ fontSize: 11, paddingTop: 10 }} />
+
+                  <Area
+                    type="monotone"
+                    dataKey="rescued"
+                    name="Meals in completed rescues"
+                    stroke="#059669"
+                    strokeWidth={2.5}
+                    fill="url(#dashboardRescuedFill)"
+                  />
+
+                  <Area
+                    type="monotone"
+                    dataKey="listings"
+                    name="Donation listings"
+                    yAxisId={undefined}
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    fill="none"
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 text-[11px]">
-            {categoryData.map((item, i) => (
-              <div key={i} className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                <span className="text-slate-600">{item.name}:</span>
-                <span className="font-bold text-slate-800">{item.value}%</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Grid: Live Activity Stream & Recent Active Donations */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Food Donations (2 Cols) */}
-        <div className="lg:col-span-2 rounded-2xl bg-white p-5 border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="font-bold text-sm text-slate-900">Active Surplus Food Inventory</h3>
-              <p className="text-[11px] text-slate-400">Recent listings awaiting dispatch or matching</p>
+          ) : (
+            <div className="flex h-64 flex-col items-center justify-center rounded-xl bg-slate-50/80 px-5 text-center">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm">
+                <BarChart3 className="h-5 w-5" />
+              </span>
+              <p className="mt-3 text-sm font-medium text-slate-700">
+                No recent chart data
+              </p>
+              <p className="mt-1 max-w-xs text-xs leading-5 text-slate-500">
+                Donation records with dates from the last seven days will appear
+                here.
+              </p>
             </div>
-            <a href="/donations" className="text-emerald-600 hover:text-emerald-700 font-bold text-xs flex items-center gap-1">
-              View All ({donations.length}) →
-            </a>
+          )}
+        </div>
+
+        <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <div className="mb-2">
+            <h2 className="font-semibold text-slate-900">
+              Food category share
+            </h2>
+            <p className="mt-1 text-xs text-slate-500">
+              Based on listed meal portions
+            </p>
           </div>
 
-          <div className="space-y-3">
-            {donations.slice(0, 4).map((donation) => (
-              <div
-                key={donation._id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <img
-                    src={donation.imageUrl}
-                    alt={donation.foodName}
-                    className="w-12 h-12 rounded-xl object-cover border border-slate-200 flex-shrink-0"
-                  />
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <PriorityBadge priority={donation.priority} size="xs" />
-                      <span className="font-bold text-slate-800 text-xs">{donation.foodName}</span>
+          {categoryData.length > 0 ? (
+            <>
+              <div className="h-48 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={48}
+                      outerRadius={72}
+                      paddingAngle={3}
+                    >
+                      {categoryData.map((entry) => (
+                        <Cell key={entry.name} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value, name) => [
+                        `${formatNumber(value)} portions`,
+                        name,
+                      ]}
+                      contentStyle={{
+                        fontSize: 12,
+                        borderRadius: 10,
+                        border: "1px solid #e2e8f0",
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="space-y-3 border-t border-slate-100 pt-4">
+                {categoryData.slice(0, 5).map((item) => (
+                  <div key={item.name}>
+                    <div className="mb-1.5 flex items-center justify-between gap-3 text-xs">
+                      <span className="flex min-w-0 items-center gap-2 text-slate-600">
+                        <span
+                          className="h-2.5 w-2.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <span className="truncate">{item.name}</span>
+                      </span>
+                      <span className="shrink-0 font-semibold text-slate-800">
+                        {item.percentage}%
+                      </span>
                     </div>
-                    <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-2">
-                      <span className="font-semibold text-emerald-700">{donation.mealCount} meals</span>
-                      <span>•</span>
-                      <span>{donation.donorName}</span>
-                      <span>•</span>
-                      <FreshnessTimer expiryTime={donation.expiryTime} compact={true} />
+                    <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${item.percentage}%`,
+                          backgroundColor: item.color,
+                        }}
+                      />
                     </div>
                   </div>
-                </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="flex h-64 flex-col items-center justify-center text-center">
+              <PackageOpen className="h-8 w-8 text-slate-300" />
+              <p className="mt-3 text-sm font-medium text-slate-700">
+                No food categories yet
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Categories will appear when donations are added.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
 
-                <div className="flex items-center gap-2 self-end sm:self-center">
-                  <StatusBadge status={donation.status} />
-                  {donation.status === 'Available' && (
+      {/* Donations and deliveries */}
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-3">
+        <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 xl:col-span-2">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="font-semibold text-slate-900">
+                Active surplus food inventory
+              </h2>
+              <p className="mt-1 text-xs text-slate-500">
+                Recent donation listings and their status
+              </p>
+            </div>
+
+            <Link
+              to="/donations"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-800 hover:text-emerald-950"
+            >
+              View all ({safeDonations.length})
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          {recentDonations.length > 0 ? (
+            <div className="space-y-3">
+              {recentDonations.map((donation) => (
+                <div
+                  key={donation._id}
+                  className="flex min-w-0 flex-col gap-3 rounded-xl border border-slate-100 bg-slate-50/70 p-3 transition-colors hover:border-emerald-200 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    {donation.imageUrl ? (
+                      <img
+                        src={donation.imageUrl}
+                        alt={donation.foodName || "Food donation"}
+                        className="h-12 w-12 shrink-0 rounded-lg border border-slate-200 object-cover"
+                        onError={(event) => {
+                          event.currentTarget.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+                        <Utensils className="h-5 w-5" />
+                      </div>
+                    )}
+
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="truncate font-semibold text-slate-800">
+                          {donation.foodName || "Food donation"}
+                        </span>
+                        <PriorityBadge priority={donation.priority} size="xs" />
+                      </div>
+
+                      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
+                        <span className="font-medium text-emerald-800">
+                          {formatNumber(donation.mealCount)} meals
+                        </span>
+                        {donation.donorName && (
+                          <>
+                            <span>·</span>
+                            <span>{donation.donorName}</span>
+                          </>
+                        )}
+                      </div>
+
+                      {donation.expiryTime && (
+                        <div className="mt-1">
+                          <FreshnessTimer
+                            expiryTime={donation.expiryTime}
+                            compact
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex shrink-0 items-center gap-2 self-end sm:self-center">
+                    <StatusBadge status={donation.status} />
+
+                    {donation.status === "Available" && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDonationForMatch(donation)}
+                        className="inline-flex items-center gap-1 rounded-lg bg-emerald-800 px-2.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-900"
+                      >
+                        <Sparkles className="h-3.5 w-3.5" />
+                        Match
+                      </button>
+                    )}
+
                     <button
-                      onClick={() => setSelectedDonationForMatch(donation)}
-                      className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-xs hover:bg-emerald-700 transition-all flex items-center gap-1"
+                      type="button"
+                      onClick={() => setSelectedDonationForDetail(donation)}
+                      className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100"
                     >
-                      <Sparkles className="w-3 h-3" />
-                      <span>Match</span>
+                      View
                     </button>
-                  )}
-                  <button
-                    onClick={() => setSelectedDonationForDetail(donation)}
-                    className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50"
-                  >
-                    View
-                  </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-slate-200 py-10 text-center">
+              <PackageOpen className="mx-auto h-8 w-8 text-slate-300" />
+              <p className="mt-3 font-medium text-slate-700">
+                No donations to display
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Create a listing to start rescuing surplus food.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-800 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-900"
+              >
+                <PlusCircle className="h-3.5 w-3.5" />
+                Add donation
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Live Dispatches / Deliveries (1 Col) */}
-        <div className="rounded-2xl bg-white p-5 border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-blue-600" />
-              <span>Live Deliveries Stream</span>
-            </h3>
-            <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-bold">
-              Active
-            </span>
+        <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="flex items-center gap-2 font-semibold text-slate-900">
+                <Activity className="h-4 w-4 text-blue-700" />
+                Live deliveries
+              </h2>
+              <p className="mt-1 text-xs text-slate-500">
+                Latest dispatch updates
+              </p>
+            </div>
+            <Link
+              to="/deliveries"
+              aria-label="View all deliveries"
+              className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
 
-          <div className="space-y-3">
-            {deliveries.slice(0, 4).map((del) => (
-              <div key={del._id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-900 truncate max-w-[150px]">{del.foodName}</span>
-                  <StatusBadge status={del.status} />
+          {recentDeliveries.length > 0 ? (
+            <div className="space-y-3">
+              {recentDeliveries.map((delivery) => (
+                <div
+                  key={delivery._id}
+                  className="rounded-xl border border-slate-100 bg-slate-50/70 p-3"
+                >
+                  <div className="flex min-w-0 items-start justify-between gap-2">
+                    <span className="truncate font-semibold text-slate-800">
+                      {delivery.foodName || "Food delivery"}
+                    </span>
+                    <StatusBadge status={delivery.status} />
+                  </div>
+
+                  <p className="mt-2 text-xs text-slate-500">
+                    Courier:{" "}
+                    <span className="font-medium text-slate-700">
+                      {delivery.volunteerName || "Unassigned"}
+                    </span>
+                  </p>
+
+                  <p className="mt-1 text-xs text-slate-500">
+                    {formatNumber(delivery.mealCount)} meals
+                  </p>
+
+                  <div className="mt-3 flex items-center justify-between gap-2 border-t border-slate-200/70 pt-2 text-xs text-slate-500">
+                    <span className="flex min-w-0 items-center gap-1">
+                      <MapPin className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">
+                        {delivery.ngoName || "NGO pending"}
+                      </span>
+                    </span>
+                    {delivery.estimatedDistanceKm != null && (
+                      <span className="shrink-0">
+                        {delivery.estimatedDistanceKm} km
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="text-[11px] text-slate-500">
-                  Courier: <strong>{del.volunteerName}</strong> ({del.mealCount} meals)
-                </div>
-                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/60">
-                  <span>To: {del.ngoName}</span>
-                  <span>{del.estimatedDistanceKm} km</span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex min-h-52 flex-col items-center justify-center rounded-xl bg-slate-50 px-4 text-center">
+              <Truck className="h-8 w-8 text-slate-300" />
+              <p className="mt-3 text-sm font-medium text-slate-700">
+                No deliveries yet
+              </p>
+              <p className="mt-1 text-xs leading-5 text-slate-500">
+                Matched donations will appear here when a delivery is created.
+              </p>
+              <Link
+                to="/deliveries"
+                className="mt-3 text-xs font-semibold text-emerald-800 hover:text-emerald-950"
+              >
+                Open deliveries
+              </Link>
+            </div>
+          )}
         </div>
-      </div>
+      </section>
 
-      {/* Modals */}
+      {/* Modals: existing functionality preserved */}
       <DonationFormModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -423,7 +781,10 @@ export const DashboardPage = () => {
         isOpen={!!selectedDonationForDetail}
         onClose={() => setSelectedDonationForDetail(null)}
         donation={selectedDonationForDetail}
-        onOpenMatch={(d) => setSelectedDonationForMatch(d)}
+        onOpenMatch={(donation) => {
+          setSelectedDonationForDetail(null);
+          setSelectedDonationForMatch(donation);
+        }}
       />
 
       <DuplicateWarningModal
@@ -431,7 +792,7 @@ export const DashboardPage = () => {
         onClose={() => setDuplicateModalData(null)}
         duplicateData={duplicateModalData}
         onConfirmAnyway={() => {
-          duplicateModalData?.proceedSave();
+          duplicateModalData?.proceedSave?.();
           setDuplicateModalData(null);
         }}
       />

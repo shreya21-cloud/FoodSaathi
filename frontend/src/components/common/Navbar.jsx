@@ -1,187 +1,359 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useData } from '../../context/DataContext';
-import { RoleBadge } from './Badge';
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useData } from "../../context/DataContext";
+import { RoleBadge } from "./Badge";
 import {
-  Sparkles,
   PlusCircle,
   Menu,
-  X,
   RefreshCw,
   LogOut,
   User,
-  ShieldCheck,
   ChevronDown,
   Layers,
-  HeartHandshake,
-  CheckCircle2,
   Database,
-} from 'lucide-react';
+  Check,
+  Sparkles,
+  LayoutDashboard,
+  UtensilsCrossed,
+  Building2,
+  Bike,
+  Truck,
+  Cpu,
+  MapPin,
+  BarChart3,
+  Settings,
+} from "lucide-react";
 
 export const Navbar = ({ toggleSidebar }) => {
-  const { user, role, switchRole, logout, loginAsDemo } = useAuth();
+  const { user, role, switchRole, logout } = useAuth();
   const { isBackendConnected, resetDemoData } = useData();
+  const location = useLocation();
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
-  const navigate = useNavigate();
+
+  const profileRef = useRef(null);
+  const roleRef = useRef(null);
+
+  useEffect(() => {
+    const closeMenus = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+
+      if (roleRef.current && !roleRef.current.contains(event.target)) {
+        setRoleMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setDropdownOpen(false);
+        setRoleMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", closeMenus);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", closeMenus);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  const pageInfo = {
+    "/dashboard": {
+      title: "Dashboard",
+      subtitle: "Your food rescue overview",
+      icon: LayoutDashboard,
+    },
+    "/donations": {
+      title: "Food Donations",
+      subtitle: "Manage surplus food listings",
+      icon: UtensilsCrossed,
+    },
+    "/ngos": {
+      title: "Partner NGOs",
+      subtitle: "Community partners and food distribution",
+      icon: Building2,
+    },
+    "/volunteers": {
+      title: "Volunteers",
+      subtitle: "Your community rescue team",
+      icon: Bike,
+    },
+    "/deliveries": {
+      title: "Active Deliveries",
+      subtitle: "Track food rescue deliveries",
+      icon: Truck,
+    },
+    "/ai-matching": {
+      title: "AI Matchmaker",
+      subtitle: "Find suitable donation matches",
+      icon: Cpu,
+    },
+    "/simulator": {
+      title: "Rescue Simulator",
+      subtitle: "Explore food rescue scenarios",
+      icon: Sparkles,
+    },
+    "/map": {
+      title: "Interactive Map",
+      subtitle: "Explore rescue locations",
+      icon: MapPin,
+    },
+    "/analytics": {
+      title: "Impact Analytics",
+      subtitle: "Measure your community impact",
+      icon: BarChart3,
+    },
+    "/settings": {
+      title: "Settings",
+      subtitle: "Manage your account preferences",
+      icon: Settings,
+    },
+  };
+
+  const page = pageInfo[location.pathname] || {
+    title: "Food Rescue Network",
+    subtitle: "Connecting surplus food with communities",
+    icon: LayoutDashboard,
+  };
+
+  const PageIcon = page.icon;
+
+  const roles = [
+    { value: "donor", label: "Donor", emoji: "🍲", active: "bg-emerald-700" },
+    { value: "ngo", label: "NGO", emoji: "🏢", active: "bg-violet-700" },
+    {
+      value: "volunteer",
+      label: "Volunteer",
+      emoji: "🛵",
+      active: "bg-blue-700",
+    },
+    { value: "admin", label: "Admin", emoji: "⚡", active: "bg-slate-800" },
+  ];
+
+  const currentRole = roles.find((item) => item.value === role) || roles[0];
+
+  const handleRoleChange = (nextRole) => {
+    switchRole(nextRole);
+    setRoleMenuOpen(false);
+  };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 sm:px-6 backdrop-blur-md">
-      {/* Left: Mobile Menu Toggle & Logo */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={toggleSidebar}
-          className="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
-          aria-label="Toggle navigation menu"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+    <header className="sticky top-0 z-30 flex h-[72px] w-full min-w-0 items-center gap-3 border-b border-slate-200/80 bg-white/95 px-3 backdrop-blur-xl sm:px-5 lg:px-6">
+      {/* Mobile menu */}
+      <button
+        type="button"
+        onClick={toggleSidebar}
+        aria-label="Toggle navigation menu"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 lg:hidden"
+      >
+        <Menu size={19} />
+      </button>
 
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-white shadow-md shadow-emerald-600/20 group-hover:scale-105 transition-transform">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5 font-black text-slate-900 tracking-tight text-lg leading-tight">
-              <span>FoodRescue</span>
-              <span className="text-emerald-600">AI</span>
-            </div>
-            <span className="hidden sm:block text-[10px] uppercase font-bold tracking-widest text-slate-600">
-              Zero Food Waste Network
-            </span>
-          </div>
-        </Link>
-      </div>
-
-      {/* Center: Quick 1-Click Role Switcher Bar */}
-      <div className="hidden md:flex items-center gap-1.5 p-1 rounded-xl bg-slate-100/80 border border-slate-200/80 text-xs">
-        <span className="px-2 py-1 text-[11px] font-semibold text-slate-600 uppercase tracking-wider flex items-center gap-1">
-          <Layers className="w-3.5 h-3.5 text-emerald-600" />
-          Role:
-        </span>
-        <button
-          onClick={() => switchRole('donor')}
-          className={`px-3 py-1 rounded-lg font-medium transition-all ${
-            role === 'donor'
-              ? 'bg-emerald-600 text-white shadow-sm font-semibold'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-          }`}
-        >
-          🍲 Donor
-        </button>
-        <button
-          onClick={() => switchRole('ngo')}
-          className={`px-3 py-1 rounded-lg font-medium transition-all ${
-            role === 'ngo'
-              ? 'bg-purple-600 text-white shadow-sm font-semibold'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-          }`}
-        >
-          🏢 NGO
-        </button>
-        <button
-          onClick={() => switchRole('volunteer')}
-          className={`px-3 py-1 rounded-lg font-medium transition-all ${
-            role === 'volunteer'
-              ? 'bg-blue-600 text-white shadow-sm font-semibold'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-          }`}
-        >
-          🛵 Volunteer
-        </button>
-        <button
-          onClick={() => switchRole('admin')}
-          className={`px-3 py-1 rounded-lg font-medium transition-all ${
-            role === 'admin'
-              ? 'bg-slate-800 text-white shadow-sm font-semibold'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-          }`}
-        >
-          ⚡ Admin
-        </button>
-      </div>
-
-      {/* Right: Actions & User Profile */}
-      <div className="flex items-center gap-2.5 sm:gap-3">
-        {/* Backend Status indicator */}
-        <div
-          title={isBackendConnected ? 'Backend API connected' : 'Client-side resilient demo state active'}
-          className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border bg-slate-50 border-slate-200 text-slate-600"
-        >
-          <Database className={`w-3.5 h-3.5 ${isBackendConnected ? 'text-emerald-500' : 'text-amber-500'}`} />
-          <span>{isBackendConnected ? 'Live MongoDB' : 'Demo Resilient State'}</span>
+      {/* Current page identity */}
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-800 sm:flex">
+          <PageIcon size={19} strokeWidth={1.8} />
         </div>
 
-        {/* Quick Donate CTA */}
+        <div className="min-w-0">
+          <h1 className="truncate text-[14px] font-bold tracking-tight text-slate-900 sm:text-[15px]">
+            {page.title}
+          </h1>
+          <p className="mt-1 hidden truncate text-[11px] text-slate-500 sm:block">
+            {page.subtitle}
+          </p>
+        </div>
+      </div>
+
+      {/* Role selector */}
+      <div ref={roleRef} className="relative shrink-0">
+        <div className="hidden items-center gap-1 rounded-xl border border-slate-200 bg-slate-50/80 p-1 xl:flex">
+          <span className="flex items-center gap-1 px-2 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+            <Layers size={13} className="text-emerald-700" />
+            Role
+          </span>
+
+          {roles.map((item) => {
+            const active = role === item.value;
+
+            return (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => handleRoleChange(item.value)}
+                aria-pressed={active}
+                className={`flex h-8 items-center gap-1.5 rounded-lg px-2 text-[11px] font-semibold transition-all ${
+                  active
+                    ? `${item.active} text-white shadow-sm`
+                    : "text-slate-600 hover:bg-white hover:text-slate-900"
+                }`}
+              >
+                <span>{item.emoji}</span>
+                <span>{item.label}</span>
+                {active && <Check size={11} />}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="relative xl:hidden">
+          <button
+            type="button"
+            onClick={() => setRoleMenuOpen((open) => !open)}
+            aria-expanded={roleMenuOpen}
+            className="flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            <Layers size={14} className="text-emerald-700" />
+            <span>{currentRole.label}</span>
+            <ChevronDown size={13} />
+          </button>
+
+          {roleMenuOpen && (
+            <div className="absolute right-0 top-full z-50 mt-2 w-40 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl">
+              {roles.map((item) => (
+                <button
+                  key={item.value}
+                  type="button"
+                  onClick={() => handleRoleChange(item.value)}
+                  className={`flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-xs font-medium ${
+                    role === item.value
+                      ? "bg-emerald-50 text-emerald-900"
+                      : "text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  <span>{item.emoji}</span>
+                  <span>{item.label}</span>
+                  {role === item.value && (
+                    <Check size={13} className="ml-auto" />
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex shrink-0 items-center gap-2">
+        {/* Backend status */}
+        <div
+          title={
+            isBackendConnected
+              ? "Backend API connected"
+              : "Client-side demo state is active"
+          }
+          className="hidden items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-2 2xl:flex"
+        >
+          <span
+            className={`h-2 w-2 rounded-full ${
+              isBackendConnected ? "bg-emerald-500" : "bg-amber-500"
+            }`}
+          />
+          <Database
+            size={13}
+            className={
+              isBackendConnected ? "text-emerald-700" : "text-amber-600"
+            }
+          />
+          <span className="whitespace-nowrap text-[10px] font-medium text-slate-600">
+            {isBackendConnected ? "Backend connected" : "Demo mode"}
+          </span>
+        </div>
+
         <Link
           to="/donations"
-          className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-semibold shadow-sm shadow-emerald-600/20 hover:from-emerald-700 hover:to-teal-700 transition-all hover:shadow"
+          className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-emerald-800 px-2.5 text-[11px] font-semibold text-white shadow-sm transition hover:bg-emerald-900 sm:px-3"
         >
-          <PlusCircle className="w-4 h-4" />
-          <span>Donate Surplus</span>
+          <PlusCircle size={15} />
+          <span className="hidden sm:inline">Donate</span>
         </Link>
 
-        {/* Simulator CTA */}
         <Link
           to="/simulator"
-          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold hover:bg-amber-100 transition-all"
+          className="hidden h-9 items-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-2.5 text-[11px] font-semibold text-amber-900 transition hover:bg-amber-100 md:inline-flex"
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
-          <span className="hidden sm:inline">Rescue</span> Simulator
+          <Sparkles size={14} className="text-amber-600" />
+          <span className="hidden 2xl:inline">Rescue </span>
+          Simulator
         </Link>
 
-        {/* User Menu */}
-        <div className="relative">
+        {/* Account */}
+        <div ref={profileRef} className="relative shrink-0">
           <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 p-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+            type="button"
+            onClick={() => setDropdownOpen((open) => !open)}
+            aria-expanded={dropdownOpen}
+            aria-label="Open account menu"
+            className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white p-1.5 transition hover:border-emerald-200 hover:bg-emerald-50/50"
           >
-            <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
-              {user?.name?.charAt(0) || 'U'}
-            </div>
-            <div className="hidden lg:block text-left">
-              <div className="text-xs font-bold text-slate-800 leading-none truncate max-w-[120px]">
-                {user?.name || 'Guest User'}
-              </div>
-              <div className="text-[10px] text-slate-600 capitalize">{role}</div>
-            </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-xs font-bold uppercase text-emerald-900">
+              {user?.name?.charAt(0) || "U"}
+            </span>
+            <span className="hidden min-w-0 text-left 2xl:block">
+              <span className="block max-w-[100px] truncate text-[11px] font-bold text-slate-800">
+                {user?.name || "Guest User"}
+              </span>
+              <span className="block text-[9px] capitalize text-slate-500">
+                {role}
+              </span>
+            </span>
+            <ChevronDown
+              size={13}
+              className="hidden text-slate-400 2xl:block"
+            />
           </button>
 
           {dropdownOpen && (
-            <div
-              className="absolute right-0 mt-2 w-64 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl z-50 animate-slide-up"
-              onClick={() => setDropdownOpen(false)}
-            >
-              <div className="p-3 border-b border-slate-100 mb-1">
-                <p className="text-xs font-bold text-slate-800">{user?.name}</p>
-                <p className="text-[11px] text-slate-600 truncate">{user?.email}</p>
+            <div className="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/10">
+              <div className="mb-1 border-b border-slate-100 px-3 py-3">
+                <p className="truncate text-xs font-bold text-slate-900">
+                  {user?.name || "Guest User"}
+                </p>
+                <p className="mt-1 truncate text-[11px] text-slate-500">
+                  {user?.email || ""}
+                </p>
                 <div className="mt-2">
                   <RoleBadge role={role} />
                 </div>
               </div>
 
-              <div className="p-1 space-y-1">
+              <div className="space-y-1 py-1">
                 <Link
                   to="/settings"
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors"
+                  onClick={() => setDropdownOpen(false)}
+                  className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-emerald-800"
                 >
-                  <User className="w-4 h-4 text-slate-400" />
+                  <User size={15} className="text-slate-400" />
                   Account & Settings
                 </Link>
+
                 <button
-                  onClick={resetDemoData}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-amber-50 hover:text-amber-800 transition-colors"
+                  type="button"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    resetDemoData();
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-xs font-medium text-slate-700 hover:bg-amber-50 hover:text-amber-800"
                 >
-                  <RefreshCw className="w-4 h-4 text-amber-500" />
+                  <RefreshCw size={15} className="text-amber-600" />
                   Reset Seed Data
                 </button>
+
                 <button
-                  onClick={logout}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors"
+                  type="button"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    logout();
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-xs font-medium text-rose-600 hover:bg-rose-50"
                 >
-                  <LogOut className="w-4 h-4 text-rose-500" />
+                  <LogOut size={15} />
                   Log Out
                 </button>
               </div>

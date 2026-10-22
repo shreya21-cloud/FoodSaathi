@@ -16,13 +16,31 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
+    required: function () {
+      return !this.googleId;
+    },
     minlength: 6,
   },
   role: {
     type: String,
     enum: ['donor', 'ngo', 'volunteer', 'admin'],
     default: 'donor',
+  },
+  googleId: {
+    type: String,
+    default: null,
+  },
+  avatar: {
+    type: String,
+    default: '',
+  },
+  resetPasswordToken: {
+    type: String,
+    default: null,
+  },
+  resetPasswordExpires: {
+    type: Date,
+    default: null,
   },
   organizationName: {
     type: String,
@@ -44,14 +62,18 @@ const userSchema = new mongoose.Schema({
   timestamps: true,
 });
 
+// Explicit sparse index on googleId for fast OAuth lookup
+userSchema.index({ googleId: 1 }, { sparse: true });
+
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || !this.password) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
+  if (!this.password || !enteredPassword) return false;
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

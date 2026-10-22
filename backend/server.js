@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { connectDB, getDBStatus } = require('./config/db');
+const { connectDB, getDBStatus, getDBHealthDetails } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 // Routes
@@ -15,26 +15,54 @@ const simulatorRoutes = require('./routes/simulatorRoutes');
 
 const app = express();
 
-// Middleware
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Trust reverse proxy (for Render, Heroku, Nginx rate-limiting & HTTPS)
+app.set('trust proxy', 1);
 
-// Connect to MongoDB (with graceful fallback if offline)
+// Allowed origins for CORS (supports local development & production deployments)
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow non-browser requests (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
+      }
+      return callback(null, true); // Permissive fallback for seamless local/preview deployment
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  })
+);
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Connect to MongoDB Atlas / Server (with non-blocking fallback if offline)
 connectDB();
 
-// Health check
+// Health check with safe database status (no credentials leaked)
 app.get('/api/health', (req, res) => {
+  const dbHealth = getDBHealthDetails();
   res.json({
     status: 'online',
     platform: 'FoodRescue AI',
     version: '1.0.0',
-    databaseConnected: getDBStatus(),
-    mode: getDBStatus() ? 'MongoDB Connected' : 'In-Memory / Demo Resilient Mode',
+    databaseConnected: dbHealth.connected,
+    database: {
+      status: dbHealth.state,
+      connected: dbHealth.connected,
+      host: dbHealth.host,
+      databaseName: dbHealth.databaseName,
+    },
+    mode: dbHealth.connected ? 'MongoDB Atlas / Connected' : 'In-Memory Resilient Mode',
     timestamp: new Date().toISOString(),
   });
 });

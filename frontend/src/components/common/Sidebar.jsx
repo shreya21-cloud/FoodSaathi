@@ -1,7 +1,6 @@
-import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { useData } from '../../context/DataContext';
-import { useAuth } from '../../context/AuthContext';
+import React from "react";
+import { NavLink, Link } from "react-router-dom";
+import { useData } from "../../context/DataContext";
 import {
   LayoutDashboard,
   UtensilsCrossed,
@@ -16,194 +15,289 @@ import {
   Flame,
   Globe,
   X,
-} from 'lucide-react';
+  ArrowUpRight,
+  HeartHandshake,
+  Leaf,
+  ChevronRight,
+} from "lucide-react";
 
 export const Sidebar = ({ isOpen, closeSidebar }) => {
   const { summaryMetrics, donations, deliveries } = useData();
-  const { role } = useAuth();
 
-  const navItems = [
+  const availableDonations = donations.filter(
+    (d) => d.status === "Available",
+  ).length;
+
+  const activeDeliveries = deliveries.filter((d) =>
+    ["Assigned", "Accepted", "Picked Up"].includes(d.status),
+  ).length;
+
+  const groups = [
     {
-      name: 'Dashboard',
-      path: '/dashboard',
-      icon: LayoutDashboard,
-      badge: null,
+      title: "Workspace",
+      items: [
+        { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+        {
+          name: "Food Donations",
+          path: "/donations",
+          icon: UtensilsCrossed,
+          badge: availableDonations,
+          color: "green",
+        },
+        { name: "Partner NGOs", path: "/ngos", icon: Building2 },
+        { name: "Volunteers", path: "/volunteers", icon: Bike },
+        {
+          name: "Active Deliveries",
+          path: "/deliveries",
+          icon: Truck,
+          badge: activeDeliveries,
+          color: "blue",
+        },
+      ],
     },
     {
-      name: 'Food Donations',
-      path: '/donations',
-      icon: UtensilsCrossed,
-      badge: donations.filter((d) => d.status === 'Available').length,
-      badgeColor: 'bg-emerald-100 text-emerald-800',
+      title: "Intelligence",
+      items: [
+        {
+          name: "AI Matchmaker",
+          path: "/ai-matching",
+          icon: Cpu,
+          badge: "AI",
+          color: "purple",
+        },
+        {
+          name: "Rescue Simulator",
+          path: "/simulator",
+          icon: Sparkles,
+          badge: "LAB",
+          color: "amber",
+        },
+        { name: "Interactive Map", path: "/map", icon: MapPin },
+        { name: "Impact Analytics", path: "/analytics", icon: BarChart3 },
+      ],
     },
     {
-      name: 'Partner NGOs',
-      path: '/ngos',
-      icon: Building2,
-      badge: null,
-    },
-    {
-      name: 'Volunteers',
-      path: '/volunteers',
-      icon: Bike,
-      badge: null,
-    },
-    {
-      name: 'Active Deliveries',
-      path: '/deliveries',
-      icon: Truck,
-      badge: deliveries.filter((d) => d.status === 'Assigned' || d.status === 'Accepted' || d.status === 'Picked Up').length,
-      badgeColor: 'bg-blue-100 text-blue-800',
-    },
-    {
-      name: 'AI Matchmaker',
-      path: '/ai-matching',
-      icon: Cpu,
-      badge: 'AI',
-      badgeColor: 'bg-purple-100 text-purple-800 font-bold',
-    },
-    {
-      name: 'Rescue Simulator',
-      path: '/simulator',
-      icon: Sparkles,
-      badge: 'WOW',
-      badgeColor: 'bg-amber-100 text-amber-800 font-bold',
-      highlight: true,
-    },
-    {
-      name: 'Interactive Map',
-      path: '/map',
-      icon: MapPin,
-      badge: null,
-    },
-    {
-      name: 'Impact Analytics',
-      path: '/analytics',
-      icon: BarChart3,
-      badge: null,
-    },
-    {
-      name: 'Settings',
-      path: '/settings',
-      icon: Settings,
-      badge: null,
+      title: "System",
+      items: [{ name: "Settings", path: "/settings", icon: Settings }],
     },
   ];
 
+  const badgeColors = {
+    green: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    blue: "bg-blue-50 text-blue-700 border-blue-100",
+    purple: "bg-violet-50 text-violet-700 border-violet-100",
+    amber: "bg-amber-50 text-amber-700 border-amber-100",
+  };
+
   return (
     <>
-      {/* Mobile Backdrop */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs lg:hidden animate-fade-in"
+        <button
+          type="button"
+          aria-label="Close navigation backdrop"
           onClick={closeSidebar}
+          className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm lg:hidden"
         />
       )}
 
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+        aria-label="Main navigation"
+        className={`fixed inset-y-0 left-0 z-50 flex w-[264px] flex-col overflow-hidden border-r border-white/70 bg-[#f8fbf9]/90 shadow-[8px_0_35px_rgba(15,45,35,0.05)] backdrop-blur-2xl transition-transform duration-300 ease-out lg:sticky lg:top-0 lg:z-30 lg:h-screen lg:shrink-0 lg:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Header inside drawer for mobile */}
-        <div className="flex h-16 items-center justify-between px-6 border-b border-slate-100 lg:hidden">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-600" />
-            <span className="font-bold text-slate-900">FoodRescue AI</span>
-          </div>
-          <button onClick={closeSidebar} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
-            <X className="w-5 h-5" />
+        {/* Subtle glass background details */}
+        <div className="pointer-events-none absolute -left-20 top-28 h-48 w-48 rounded-full bg-emerald-200/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 top-[42%] h-44 w-44 rounded-full bg-teal-100/30 blur-3xl" />
+
+        {/* Brand header */}
+        <div className="relative flex h-[76px] shrink-0 items-center justify-between border-b border-white/80 bg-white/60 px-4">
+          <Link
+            to="/dashboard"
+            onClick={closeSidebar}
+            className="group flex min-w-0 items-center gap-3"
+          >
+            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[15px] bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900 text-white shadow-lg shadow-emerald-900/15 transition-transform duration-200 group-hover:scale-105">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+              <HeartHandshake
+                className="relative h-[21px] w-[21px]"
+                strokeWidth={1.8}
+              />
+            </div>
+
+            <div className="min-w-0">
+              <p className="truncate text-[14px] font-extrabold tracking-tight text-slate-900">
+                FoodRescue <span className="text-emerald-700">AI</span>
+              </p>
+              <p className="mt-1 text-[9px] font-semibold tracking-[0.12em] text-slate-400">
+                ZERO WASTE NETWORK
+              </p>
+            </div>
+          </Link>
+
+          <button
+            type="button"
+            onClick={closeSidebar}
+            aria-label="Close sidebar"
+            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white hover:text-slate-800 lg:hidden"
+          >
+            <X size={18} />
           </button>
         </div>
 
-        {/* Live Rescue Metric Ticker in Sidebar */}
-        <div className="p-4 border-b border-slate-100">
-          <div className="rounded-xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent p-3 border border-emerald-200/60">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1">
-                <Flame className="w-3.5 h-3.5 text-emerald-600 animate-bounce" />
-                Live Impact
+        {/* Impact glass widget */}
+        <div className="relative shrink-0 px-3.5 pb-4 pt-4">
+          <div className="relative overflow-hidden rounded-2xl border border-white bg-white/65 p-4 shadow-[0_5px_22px_rgba(15,45,35,0.04)] backdrop-blur-xl">
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-emerald-50/80 via-white/20 to-teal-50/70" />
+            <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full border border-emerald-200/50" />
+            <div className="pointer-events-none absolute -right-2 -top-4 h-16 w-16 rounded-full border border-emerald-200/40" />
+
+            <div className="relative flex items-center justify-between gap-2">
+              <span className="flex items-center gap-2 text-[9px] font-extrabold uppercase tracking-[0.13em] text-emerald-800">
+                <span className="flex h-7 w-7 items-center justify-center rounded-xl border border-emerald-100 bg-white/80 text-emerald-700 shadow-sm">
+                  <Flame size={15} />
+                </span>
+                Community impact
               </span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 font-semibold text-emerald-800">
-                Verified
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-40" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
               </span>
             </div>
-            <div className="mt-1.5 text-xl font-extrabold text-slate-800">
-              {summaryMetrics.totalMealsRescued.toLocaleString()}
+
+            <div className="relative mt-4 flex items-end justify-between gap-3">
+              <div>
+                <p className="text-[28px] font-extrabold leading-none tracking-[-0.04em] tabular-nums text-slate-900">
+                  {(summaryMetrics.totalMealsRescued ?? 0).toLocaleString()}
+                </p>
+                <p className="mt-2 text-[11px] font-medium text-slate-500">
+                  Meals rescued
+                </p>
+              </div>
+
+              <div className="mb-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-emerald-100/80 bg-white/80 text-emerald-700 shadow-sm">
+                <HeartHandshake size={21} strokeWidth={1.7} />
+              </div>
             </div>
-            <p className="text-[11px] text-slate-500">Meals rescued from landfill</p>
+
+            <div className="relative mt-4 flex items-center gap-2 border-t border-emerald-900/[0.07] pt-3">
+              <Leaf size={13} className="shrink-0 text-emerald-700" />
+              <p className="text-[10px] font-medium text-slate-500">
+                Every meal matters.
+              </p>
+              <span className="ml-auto text-[9px] font-bold tracking-wide text-emerald-800">
+                IMPACT
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Navigation Items */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-          <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Navigation
-          </div>
+        {/* Navigation groups */}
+        <nav className="relative min-h-0 flex-1 space-y-5 overflow-y-auto px-3 pb-4 pt-1">
+          {groups.map((group) => (
+            <div key={group.title}>
+              <div className="mb-2 flex items-center gap-2 px-3">
+                <span className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-slate-400">
+                  {group.title}
+                </span>
+                <span className="h-px flex-1 bg-gradient-to-r from-slate-200/80 to-transparent" />
+              </div>
 
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={closeSidebar}
-                className={({ isActive }) =>
-                  `group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                    isActive
-                      ? item.highlight
-                        ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20'
-                        : 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                      : item.highlight
-                      ? 'text-amber-700 bg-amber-50/70 hover:bg-amber-100 border border-amber-200/60'
-                      : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <div className="flex items-center gap-3">
-                      <Icon
-                        className={`w-4 h-4 transition-transform group-hover:scale-110 ${
+              <div className="space-y-1">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      onClick={closeSidebar}
+                      className={({ isActive }) =>
+                        `group relative flex min-h-[41px] items-center justify-between gap-2 rounded-xl border px-3 py-2 text-[12px] transition-all duration-200 ${
                           isActive
-                            ? 'text-white'
-                            : item.highlight
-                            ? 'text-amber-600'
-                            : 'text-slate-400 group-hover:text-slate-700'
-                        }`}
-                      />
-                      <span>{item.name}</span>
-                    </div>
+                            ? "border-emerald-100/90 bg-white/90 font-bold text-emerald-950 shadow-[0_3px_12px_rgba(16,80,58,0.07)]"
+                            : "border-transparent font-medium text-slate-600 hover:border-white/90 hover:bg-white/60 hover:text-slate-950 hover:shadow-sm"
+                        }`
+                      }
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {isActive && (
+                            <span className="absolute bottom-2 left-0 top-2 w-[3px] rounded-r-full bg-gradient-to-b from-emerald-500 to-teal-700" />
+                          )}
 
-                    {item.badge !== null && item.badge !== undefined && (
-                      <span
-                        className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
-                          isActive
-                            ? 'bg-white/25 text-white'
-                            : item.badgeColor || 'bg-slate-100 text-slate-700'
-                        }`}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </>
-                )}
-              </NavLink>
-            );
-          })}
-        </div>
+                          <span className="flex min-w-0 items-center gap-3">
+                            <span
+                              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                                isActive
+                                  ? "bg-emerald-50 text-emerald-800"
+                                  : item.color === "amber"
+                                    ? "bg-amber-50/80 text-amber-700 group-hover:bg-amber-100"
+                                    : "text-slate-400 group-hover:bg-white group-hover:text-slate-700"
+                              }`}
+                            >
+                              <Icon
+                                size={16}
+                                strokeWidth={isActive ? 2 : 1.8}
+                              />
+                            </span>
+                            <span className="truncate">{item.name}</span>
+                          </span>
 
-        {/* Footer Navigation */}
-        <div className="p-3 border-t border-slate-100 space-y-2">
+                          {item.badge !== undefined && (
+                            <span
+                              className={`shrink-0 rounded-md border px-1.5 py-0.5 text-[9px] font-extrabold ${
+                                isActive
+                                  ? "border-emerald-700 bg-emerald-800 text-white"
+                                  : badgeColors[item.color] ||
+                                    "border-slate-100 bg-slate-50 text-slate-600"
+                              }`}
+                            >
+                              {item.badge}
+                            </span>
+                          )}
+
+                          {item.highlight && (
+                            <span className="shrink-0 rounded-md bg-amber-50 px-1.5 py-1 text-[8px] font-extrabold tracking-wide text-amber-800">
+                              LAB
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        {/* Footer glass panel */}
+        <div className="relative shrink-0 border-t border-white/90 bg-white/55 p-3 backdrop-blur-xl">
           <Link
             to="/"
-            className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors"
+            onClick={closeSidebar}
+            className="group flex min-h-[40px] items-center justify-between gap-2 rounded-xl border border-transparent px-2.5 transition-colors hover:border-white hover:bg-white/80"
           >
-            <Globe className="w-4 h-4 text-slate-400" />
-            <span>Public Landing Page</span>
+            <span className="flex min-w-0 items-center gap-2.5">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/80 text-slate-500 shadow-sm">
+                <Globe size={15} />
+              </span>
+              <span className="truncate text-[11px] font-medium text-slate-600 group-hover:text-emerald-800">
+                Public landing page
+              </span>
+            </span>
+            <ArrowUpRight
+              size={14}
+              className="shrink-0 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            />
           </Link>
-          <div className="px-3 py-1 text-[10px] text-slate-400">
-            FoodRescue AI v1.0 • College Hackathon
+
+          <div className="mt-2 flex items-center justify-between px-2.5 pt-1 text-[9px] text-slate-400">
+            <span>FoodRescue AI</span>
+            <span className="rounded-md border border-slate-200/80 bg-white/70 px-1.5 py-0.5">
+              v1.0
+            </span>
           </div>
         </div>
       </aside>

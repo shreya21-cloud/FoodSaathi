@@ -1,17 +1,21 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
-  timeout: 5000,
+  baseURL: import.meta.env.VITE_API_URL || '/api',
+  timeout: 12000,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-// Request interceptor: attach token
+// Request interceptor: attach token from localStorage or sessionStorage
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('foodrescue_token');
+    const token =
+      localStorage.getItem('foodrescue_token') ||
+      sessionStorage.getItem('foodrescue_token');
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,9 +28,10 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Log network/server errors for observability
     if (error.code === 'ERR_NETWORK' || !error.response) {
-      console.info('[FoodRescue AI] Backend service unavailable - using client-side resilient state mode.');
+      console.info(
+        '[FoodRescue AI] Network note: Backend API temporarily unreachable, operating in resilient offline state.'
+      );
     }
     return Promise.reject(error);
   }

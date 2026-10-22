@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import React from "react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 export const StatCard = ({
   title,
@@ -8,82 +8,120 @@ export const StatCard = ({
   icon: Icon,
   trend,
   trendPositive = true,
-  colorScheme = 'emerald',
+  colorScheme = "emerald",
   onClick,
 }) => {
   const colorMap = {
     emerald: {
-      bg: 'from-emerald-500/10 to-teal-500/5',
-      border: 'border-emerald-200/60',
-      iconBg: 'bg-emerald-100 text-emerald-700',
-      glow: 'group-hover:border-emerald-400',
+      iconBg: "bg-emerald-50",
+      iconColor: "text-emerald-700",
+      border: "hover:border-emerald-200",
+      accent: "text-emerald-700",
+    },
+    teal: {
+      iconBg: "bg-teal-50",
+      iconColor: "text-teal-700",
+      border: "hover:border-teal-200",
+      accent: "text-teal-700",
     },
     blue: {
-      bg: 'from-blue-500/10 to-indigo-500/5',
-      border: 'border-blue-200/60',
-      iconBg: 'bg-blue-100 text-blue-700',
-      glow: 'group-hover:border-blue-400',
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-700",
+      border: "hover:border-blue-200",
+      accent: "text-blue-700",
     },
     amber: {
-      bg: 'from-amber-500/10 to-orange-500/5',
-      border: 'border-amber-200/60',
-      iconBg: 'bg-amber-100 text-amber-700',
-      glow: 'group-hover:border-amber-400',
+      iconBg: "bg-amber-50",
+      iconColor: "text-amber-700",
+      border: "hover:border-amber-200",
+      accent: "text-amber-700",
     },
     rose: {
-      bg: 'from-rose-500/10 to-red-500/5',
-      border: 'border-rose-200/60',
-      iconBg: 'bg-rose-100 text-rose-700',
-      glow: 'group-hover:border-rose-400',
+      iconBg: "bg-rose-50",
+      iconColor: "text-rose-700",
+      border: "hover:border-rose-200",
+      accent: "text-rose-700",
     },
     purple: {
-      bg: 'from-purple-500/10 to-fuchsia-500/5',
-      border: 'border-purple-200/60',
-      iconBg: 'bg-purple-100 text-purple-700',
-      glow: 'group-hover:border-purple-400',
+      iconBg: "bg-purple-50",
+      iconColor: "text-purple-700",
+      border: "hover:border-purple-200",
+      accent: "text-purple-700",
     },
   };
 
   const scheme = colorMap[colorScheme] || colorMap.emerald;
 
+  const handleKeyDown = (event) => {
+    if (!onClick) return;
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div
       onClick={onClick}
-      className={`group relative overflow-hidden rounded-2xl bg-white p-5 border shadow-sm transition-all duration-300 hover:shadow-card hover:-translate-y-0.5 ${scheme.border} ${scheme.glow} ${
-        onClick ? 'cursor-pointer' : ''
+      onKeyDown={handleKeyDown}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      className={`group flex min-w-0 flex-col rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition-colors duration-200 sm:p-4 ${
+        scheme.border
+      } ${
+        onClick
+          ? "cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+          : ""
       }`}
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${scheme.bg} opacity-50 pointer-events-none`} />
-
-      <div className="relative flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</p>
-          <h3 className="mt-1 text-2xl font-black text-slate-800 tracking-tight">{value}</h3>
-          {subtitle && <p className="mt-1 text-xs text-slate-500">{subtitle}</p>}
-        </div>
+      <div className="flex min-w-0 items-start justify-between gap-2">
+        <p className="min-w-0 break-words text-[11px] font-semibold uppercase leading-4 tracking-wide text-slate-500 sm:text-xs">
+          {title}
+        </p>
 
         {Icon && (
-          <div className={`p-3 rounded-xl shadow-inner transition-transform duration-300 group-hover:scale-110 ${scheme.iconBg}`}>
-            <Icon className="w-6 h-6" />
-          </div>
+          <span
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${scheme.iconBg} ${scheme.iconColor}`}
+          >
+            <Icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
+          </span>
+        )}
+      </div>
+
+      <div className="mt-3 min-w-0">
+        <p
+          className="break-words text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-[26px]"
+          title={String(value ?? "")}
+        >
+          {value}
+        </p>
+
+        {subtitle && (
+          <p className="mt-1.5 break-words text-xs leading-5 text-slate-500">
+            {subtitle}
+          </p>
         )}
       </div>
 
       {trend && (
-        <div className="relative mt-3 flex items-center gap-1.5 pt-2 border-t border-slate-100/80 text-xs">
+        <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 border-t border-slate-100 pt-3">
           <span
-            className={`inline-flex items-center font-semibold ${
-              trendPositive ? 'text-emerald-600' : 'text-rose-600'
+            className={`inline-flex shrink-0 items-center gap-0.5 text-xs font-semibold ${
+              trendPositive ? "text-emerald-700" : "text-rose-700"
             }`}
           >
             {trendPositive ? (
-              <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" />
+              <ArrowUpRight className="h-3.5 w-3.5" />
             ) : (
-              <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" />
+              <ArrowDownRight className="h-3.5 w-3.5" />
             )}
             {trend}
           </span>
-          <span className="text-slate-400">vs last week</span>
+
+          <span className="min-w-0 text-[11px] leading-4 text-slate-400">
+            vs last week
+          </span>
         </div>
       )}
     </div>

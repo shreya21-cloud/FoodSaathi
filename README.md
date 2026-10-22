@@ -8,13 +8,15 @@
 ## 🚀 Key Features
 
 ### 1. 🎯 Role-Based Architecture & 1-Click Instant Demo Login
+
 - **Donor Role**: Publish surplus food batches, specify safe-consumption deadlines, and track real-time courier pickups.
 - **NGO Role**: Manage daily meal absorption capacity, set dietary category preferences, and claim incoming donations.
-- **Volunteer Courier Role**: Step-by-step dispatch workflow (*Assigned ➔ Accepted ➔ Picked Up ➔ Delivered*) with turn-by-turn route suggestions.
+- **Volunteer Courier Role**: Step-by-step dispatch workflow (_Assigned ➔ Accepted ➔ Picked Up ➔ Delivered_) with turn-by-turn route suggestions.
 - **Admin Role**: Global oversight over metrics, network health, and simulated dispatches.
 - **Instant Role Switcher**: Switch perspectives with a single click in the top navigation bar during hackathon presentations.
 
 ### 2. 🧠 Explainable AI Capabilities
+
 - **Smart Donor–NGO Matching**: Multi-criteria weighted algorithm (Proximity 30%, Quantity fit 25%, Category match 20%, Reliability 15%, Urgency 10%) providing percentage match scores and clear human-readable factors.
 - **Food Priority & Safety Triage**: Categorizes food into `Critical (<3h)`, `High (3-6h)`, `Medium (6-12h)`, and `Low (>12h)` with strict enforcement of food safety rules.
 - **Smart Volunteer Dispatch**: Recommends best couriers based on distance to pickup, vehicle capacity, active load, and performance rating.
@@ -23,12 +25,14 @@
 - **Route Optimizer (TSP Heuristic)**: Minimizes multi-stop transit distance and time for volunteer routes.
 
 ### 3. 🌟 Flagship WOW Feature: Food Rescue Simulator
+
 - **Interactive Configuration**: Sliders for Surplus Meals (100–5,000), Partner NGOs (2–30), Volunteers (2–50), Donor Hubs (1–15), and Radius (2–30 km).
 - **Multi-Stage Animated Execution**: Visual progress across 5 allocation stages.
 - **Real Dynamic Calculations**: Calculates exact portion allocations, volunteer trips, baseline vs AI waste reduction, CO₂ emissions averted, and bottleneck diagnostic insights.
 - **Visual Analytics**: Interactive Recharts graphs and full searchable Dispatch Ledger table.
 
 ### 4. 🗺️ Interactive Leaflet Map
+
 - OpenStreetMap integration with custom styled SVG pins for Donors, Partner NGOs, Volunteers, and Urgent donations.
 - Active route polyline visualizations and popup quick-action cards.
 - Interactive filter toolbar to isolate map layers.
@@ -88,33 +92,42 @@ Mini project/
 ## ⚡ Quick Start Guide
 
 ### Prerequisites
+
 - Node.js (v18 or higher)
 - (Optional) MongoDB local service running on port `27017`
 
 ### 1. Install All Dependencies
+
 ```bash
 npm run install:all
 ```
-*Or install separately:*
+
+_Or install separately:_
+
 ```bash
 cd frontend && npm install
 cd ../backend && npm install
 ```
 
 ### 2. (Optional) Seed the Database
+
 If you have local MongoDB installed and running:
+
 ```bash
 npm run seed
 ```
 
 ### 3. Start the Development Servers
+
 From the root directory:
+
 ```bash
 # Starts both Backend (Port 5000) and Frontend (Port 5173) concurrently
 npm run dev
 ```
 
 Or run them in separate terminals:
+
 - **Frontend**: `cd frontend && npm run dev` ➔ [http://localhost:5173](http://localhost:5173)
 - **Backend**: `cd backend && npm run dev` ➔ [http://localhost:5000](http://localhost:5000)
 
@@ -122,14 +135,14 @@ Or run them in separate terminals:
 
 ## 👥 Demo Accounts (1-Click Login)
 
-| Role | Name / Organization | Email | Password |
-|---|---|---|---|
-| **Donor** | Green Feast Caterers | `donor@foodrescue.ai` | `password123` |
-| **NGO** | Hope Food Shelter | `ngo@foodrescue.ai` | `password123` |
-| **Volunteer** | Alex Rivera | `volunteer@foodrescue.ai` | `password123` |
-| **Admin** | System Administrator | `admin@foodrescue.ai` | `password123` |
+| Role          | Name / Organization  | Email                     | Password      |
+| ------------- | -------------------- | ------------------------- | ------------- |
+| **Donor**     | Green Feast Caterers | `donor@foodrescue.ai`     | `password123` |
+| **NGO**       | Hope Food Shelter    | `ngo@foodrescue.ai`       | `password123` |
+| **Volunteer** | Alex Rivera          | `volunteer@foodrescue.ai` | `password123` |
+| **Admin**     | System Administrator | `admin@foodrescue.ai`     | `password123` |
 
-*Note: You can also switch roles anytime directly from the top navigation bar without logging out!*
+_Note: You can also switch roles anytime directly from the top navigation bar without logging out!_
 
 ---
 
